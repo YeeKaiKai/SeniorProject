@@ -1,8 +1,8 @@
 const createDialogue = require("../model/createDialogue.js");
-const createAndUpdateOrder = require("../model/createAndUpdateOrder.js");
+const createAndUpdateCart = require("../model/createAndUpdateCart.js");
 const requireDialogue = require("../model/requireDialogue.js");
 const requireMenu = require("../model/requireMenu.js");
-const deleteOrder = require("../model/deleteOrder.js");
+const deleteCart = require("../model/deleteCart.js");
 
 const config = require("../config/config.js");
 
@@ -96,7 +96,7 @@ exports.postDiagolue = async function(req, res, next) {
         while ((match = foodPattern.exec(chatgptText)) !== null) {
             foods.push(match[2]); // 只提取第二個捕獲組，即餐點名稱
         }
-        createAndUpdateOrder(customerID, quantities, foods, restaurantID, restaurantName);
+        createAndUpdateCart(customerID, quantities, foods, restaurantID, restaurantName);
     } else if (isCancelling(chatgptText)) {
         const foodPattern = /\d+[\u4e00-\u9fa5]{1}([\u4e00-\u9fa5]+)/g;
 
@@ -106,7 +106,7 @@ exports.postDiagolue = async function(req, res, next) {
         while ((match = foodPattern.exec(chatgptText)) !== null) {
             foods.push(match[1]); // 只提取第一個捕獲組，即餐點名稱
         }
-        deleteOrder(customerID, foods, restaurantID, restaurantName);
+        deleteCart(customerID, foods, restaurantID, restaurantName);
     }
     
     res.json({
