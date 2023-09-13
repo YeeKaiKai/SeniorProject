@@ -1,0 +1,59 @@
+CREATE TABLE RESTAURANT
+(
+  RestaurantID CHAR(3) NOT NULL,
+  Name VARCHAR(30) NOT NULL,
+  Address VARCHAR(60) NOT NULL,
+  PRIMARY KEY (RestaurantID)
+);
+
+CREATE TABLE `TABLE`
+(
+  TableNumber CHAR(3) NOT NULL,
+  TableAmount INT NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  PRIMARY KEY (TableNumber, RestaurantID),
+  FOREIGN KEY (RestaurantID) REFERENCES RESTAURANT(RestaurantID)
+);
+
+CREATE TABLE MENU
+(
+  Food VARCHAR(30) NOT NULL,
+  Description VARCHAR(100) NOT NULL,
+  Quantity INT NOT NULL,
+  Ingredient VARCHAR(100) NOT NULL,
+  Price INT NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  PRIMARY KEY (Food, RestaurantID),
+  FOREIGN KEY (RestaurantID) REFERENCES RESTAURANT(RestaurantID)
+);
+
+CREATE TABLE CUSTOMER
+(
+  Name VARCHAR(20) NOT NULL,
+  ForHere BOOLEAN NOT NULL,
+  CustomerID CHAR(3) NOT NULL AUTO_INCREMENT,
+  TableNumber CHAR(3) NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  PRIMARY KEY (CustomerID),
+  FOREIGN KEY (TableNumber, RestaurantID) REFERENCES `TABLE`(TableNumber, RestaurantID)
+);
+
+CREATE TABLE DIALOGUE
+(
+  Content VARCHAR(200) NOT NULL,
+  DialogueID INT NOT NULL AUTO_INCREMENT,
+  CustomerID CHAR(3) NOT NULL,
+  PRIMARY KEY (DialogueID, CustomerID),
+  FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID)
+);
+
+CREATE TABLE `ORDER`
+(
+  Amount INT NOT NULL,
+  CustomerID CHAR(3) NOT NULL,
+  Food VARCHAR(30) NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  PRIMARY KEY (CustomerID, Food, RestaurantID),
+  FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID),
+  FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
+);
