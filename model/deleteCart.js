@@ -6,7 +6,7 @@ module.exports = async function (customerID, food, restaurantID, restaurantName)
         let sql = 
         `
         DELETE FROM \`ORDER\`
-        WHERE CustomerID = "${customerID}" AND Food = "${food[num]}" AND RestaurantID = "${restaurantID[num]}";
+        WHERE CustomerID = "${customerID}" AND Food = "${food[num]}" AND RestaurantID = "${restaurantID}";
         `;
         const pool = getPool(restaurantName);
         pool.getConnection((conn_err, connection) => {
