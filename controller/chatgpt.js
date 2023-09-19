@@ -1,5 +1,5 @@
 const createDialogue = require("../model/createDialogue.js");
-const createAndUpdateCart = require("../model/createAndUpdateCart.js");
+const createCart = require("../model/createCart.js");
 const requireDialogue = require("../model/requireDialogue.js");
 const requireMenu = require("../model/requireMenu.js");
 const deleteCart = require("../model/deleteCart.js");
@@ -8,6 +8,7 @@ const config = require("../config/config.js");
 
 const fs = require("fs");
 const path = require("path");
+const updateCart = require("../model/updateCart.js");
 
 /**
  * 利用 ChatGPT 的回覆判斷是否為點餐
@@ -16,7 +17,7 @@ const path = require("path");
  */
 function isOrdering(text) {
 
-    const pattern = /已為您點了(.+)，還需要什麼呢？$/;
+    const pattern = /已為您(.+)，還需要什麼呢？$/;
     return pattern.test(text);    
 
 }
@@ -84,29 +85,39 @@ exports.postDiagolue = async function(req, res, next) {
     let chatgptText = chatgptResponse.text;
     if (isOrdering(chatgptText)) {
         // 匹配數量和餐點名稱的正則表達式
-        const quantityPattern = /\d+/g;
-        const foodPattern = /(\d+[\u4e00-\u9fa5]{1})([\u4e00-\u9fa5]+)/g;
 
-        // 使用 match 方法來找出所有匹配的部分
-        const quantities = chatgptText.match(quantityPattern);
-        const foods = [];
+        const cancelPart = (chatgptText.match(/取消(.*?)(?=點了|改為|還需要|$)/) || [])[1];
+        const orderPart = (chatgptText.match(/點了(.*?)(?=取消|改為|還需要|$)/) || [])[1];
+        const changePart = (chatgptText.match(/改為(.*?)(?=取消|點了|還需要|$)/) || [])[1];
 
-        // 使用 exec 方法進行全局搜索，並提取餐點名稱
-        let match;
-        while ((match = foodPattern.exec(chatgptText)) !== null) {
-            foods.push(match[2]); // 只提取第二個捕獲組，即餐點名稱
+        const foodPattern = /(\d+)[\u4e00-\u9fa5]{1}([\u4e00-\u9fa5]+)/g;
+
+        const extractFoods = (str) => {
+            let match;
+            const amounts = [];
+            const foods = [];
+            while ((match = foodPattern.exec(str)) !== null) {
+                amounts.push(parseInt(match[1], 10));
+                foods.push(match[2]);
+            }
+            return [amounts, foods];
+        };
+
+        const [orderAmounts, orderFoods] = extractFoods(orderPart || "");
+        const [cancelAmounts, cancelFoods] = extractFoods(cancelPart || "");
+        const [changeAmounts, changeFoods] = extractFoods(changePart || "");
+
+        if (orderAmounts.length > 0) {
+            createCart(customerID, orderAmounts, orderFoods, restaurantID, restaurantName);
         }
-        createAndUpdateCart(customerID, quantities, foods, restaurantID, restaurantName);
-    } else if (isCancelling(chatgptText)) {
-        const foodPattern = /\d+[\u4e00-\u9fa5]{1}([\u4e00-\u9fa5]+)/g;
 
-        // 使用 exec 方法進行全局搜索，並提取餐點名稱
-        const foods = [];
-        let match;
-        while ((match = foodPattern.exec(chatgptText)) !== null) {
-            foods.push(match[1]); // 只提取第一個捕獲組，即餐點名稱
+        if (cancelAmounts.length > 0) {
+            deleteCart(customerID, cancelFoods, restaurantID, restaurantName);
         }
-        deleteCart(customerID, foods, restaurantID, restaurantName);
+
+        if (changeAmounts.length > 0) {
+            updateCart(customerID, changeAmounts, changeFoods, restaurantID, restaurantName);
+        }
     }
     
     res.json({
