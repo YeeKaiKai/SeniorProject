@@ -2,6 +2,7 @@ const createDialogue = require("../model/createDialogue.js");
 const createCart = require("../model/createCart.js");
 const requireCategory = require("../model/requireCategory.js");
 const requireDialogue = require("../model/requireDialogue.js");
+const requireCart = require("../model/requireCart.js");
 const requireMenu = require("../model/requireMenu.js");
 const deleteCart = require("../model/deleteCart.js");
 
@@ -33,7 +34,7 @@ function isCancelling(text) {
     
 }
 
-function menuToChinese(text) {
+function toChinese(text) {
 
     text = JSON.stringify(text);
     text = text.replace(/Food/g, "食物");
@@ -42,6 +43,8 @@ function menuToChinese(text) {
     text = text.replace(/Category/g, '類別');
     text = text.replace(/Ingredient/g, '原料');
     text = text.replace(/Price/g, '價格');
+    text = text.replace(/Amount/g, '訂購數量');
+    text = text.replace('/Note/g', '備註');
 
     return text;
 }
@@ -81,14 +84,17 @@ exports.postDiagolue = async function(req, res, next) {
 
     let dialogue = await requireDialogue(customerID, restaurantName); // 先前該顧客與 ChatGPT 的對話
     let menu = await requireMenu(restaurantID, restaurantName); // 店家菜單
-    menu = menuToChinese(menu);
+    let cart = await requireCart(restaurantID, restaurantName, customerID);
+    cart = toChinese(cart);
+    menu = toChinese(menu);
 
     let prompt; // 欲發送給 ChatGPT 的 prompt
     if (dialogue) {
-        prompt = command + "菜單內容：\n" + menu + "先前對話內容：\n" + dialogue + text;
+        prompt = command + "\n\n菜單內容：" + menu + "\n\n顧客目前訂單內容：" + cart + "\n\n先前對話內容：" + dialogue + text;
     } else {
         prompt = command + menu + text;
     }
+    console.log(prompt);
     const chatgptResponse = await api.sendMessage(prompt);    
     const chatting = "顧客：" + text + "\n" + "服務生：" + chatgptResponse.text;
 
