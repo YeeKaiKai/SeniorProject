@@ -57,8 +57,14 @@ module.exports = async function (customerID, restaurantName) {
                 
                 // 取出純文字內容
                 let text = "";
-                for (let i = 0; i < results.length; i++) {
-                    text = text + results[i].Content + "\n";
+                
+                // 只取最近五次的對話紀錄
+                if (results.length !== 0) {
+                    let start = (results.length - 5) >= 0 ? results.length - 5 : 0;
+                    let end = (results.length - 5) >= 0 ? 5 : results.length;
+                    for (let i = 0; i < end; i++) {
+                        text = text + results[start + i].Content + "\n";
+                    }
                 }
                 resolve(text);
             })
