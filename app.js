@@ -38,11 +38,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(3000, '192.168.1.147', (err) => {
-  if(err) {
-    console.log(err);
-  }
-  console.log("listen on port 3000");
-})
+// app.listen(3000, '192.168.1.147', (err) => {
+//   if(err) {
+//     console.log(err);
+//   }
+//   console.log("listen on port 3000");
+// })
 
 module.exports = app;
