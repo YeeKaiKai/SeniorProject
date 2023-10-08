@@ -59,7 +59,6 @@ module.exports = async function (restaurantID, restaurantName) {
                 // for (let i = 0; i < results.length; i++) {
                 //     text = text + results[i].Content + "\n";
                 // }
-                console.log(results)
                 resolve(results);
             })
             if (connection) {
