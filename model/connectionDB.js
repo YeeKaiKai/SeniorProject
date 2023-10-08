@@ -12,8 +12,8 @@ function getPool(databaseName) {
   if (!poolCache[databaseName]) {
     poolCache[databaseName] = mysql.createPool({
       connectionLimit: 20,
-      host: config.HOST,
-      port: config.PORT,
+      host: config.DB_HOST,
+      port: config.DB_PORT,
       user: config.USER,
       password: config.PASSWORD,
       database: databaseName,
