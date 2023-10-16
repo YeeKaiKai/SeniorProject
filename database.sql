@@ -28,6 +28,25 @@ CREATE TABLE MENU
   FOREIGN KEY (RestaurantID) REFERENCES RESTAURANT(RestaurantID)
 );
 
+CREATE TABLE FOOD_CUSTOM
+(
+  Food VARCHAR(30) NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  Custom VARCHAR(20) NOT NULL,
+  PRIMARY KEY (Food, RestaurantID, Custom),
+  FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
+);
+
+CREATE TABLE CUSTOM_OPTION
+(
+  Food VARCHAR(30) NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  Custom VARCHAR(20) NOT NULL,
+  OptionName VARCHAR(20) NOT NULL,
+  PRIMARY KEY (Food, RestaurantID, Custom, OptionName),
+  FOREIGN KEY (Food, RestaurantID, Custom) REFERENCES FOOD_CUSTOM(Food, RestaurantID, Custom)
+);
+
 CREATE TABLE CUSTOMER
 (
   CustomerName VARCHAR(20) NOT NULL,
