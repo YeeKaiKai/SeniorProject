@@ -17,6 +17,8 @@ module.exports = async function (customerID, quantity, food, restaurantID, resta
         `
         INSERT INTO \`ORDER\`(CustomerID, Food, Amount, RestaurantID)
         VALUES ("${customerID}", "${food[num]}", ${quantity[num]}, "${restaurantID}")
+        ON DUPLICATE KEY
+        UPDATE Amount = ${quantity[num]}
         `;
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
