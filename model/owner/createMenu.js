@@ -1,11 +1,11 @@
-const getPool = require('./connectionDB.js');
+const getPool = require('../connectionDB.js');
 
-module.exports = async function (customerID, dialogue, restaurantName) {
+module.exports = async function (food, amount, price, ingredient, description, restaurantID, restaurantName) {
 
     let sql = 
     `
-    INSERT INTO DIALOGUE(CustomerID, Content)
-    VALUES("${customerID}", "${dialogue}")
+    INSERT INTO MENU(Food, Amount, Price, Ingredient, Description, RestaurantID)
+    VALUES("${food}", ${amount}, ${price}, "${ingredient}", "${description}", "${restaurantID}")
     `;
     const pool = getPool(restaurantName);
     pool.getConnection((conn_err, connection) => {

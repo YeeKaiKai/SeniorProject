@@ -1,4 +1,4 @@
-const getPool = require('./connectionDB.js');
+const getPool = require('../../connectionDB.js');
 
 /**
  * 新增顧客訂單，如果已經有了就會變修改數量。
@@ -15,10 +15,11 @@ module.exports = async function (customerID, quantity, food, restaurantID, resta
     for (let num = 0; num < quantity.length; num++) {
         let sql =
         `
-        INSERT INTO \`ORDER\`(CustomerID, Food, Amount, RestaurantID)
-        VALUES ("${customerID}", "${food[num]}", ${quantity[num]}, "${restaurantID}")
-        ON DUPLICATE KEY
-        UPDATE Amount = ${quantity[num]}
+        UPDATE \`ORDER\` 
+        SET Amount = ${quantity[num]} 
+        WHERE Food = "${food[num]}"
+        AND CustomerID = "${customerID}" 
+        AND RestaurantID = "${restaurantID}"
         `;
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
