@@ -1,4 +1,4 @@
-const getPool = require("../../connectionDB.js");
+const getPool = require("../connectionDB.js");
 
 module.exports = async function (restaurantID, restaurantName, customerID) {
 

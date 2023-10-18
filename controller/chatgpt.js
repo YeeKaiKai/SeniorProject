@@ -1,11 +1,11 @@
-const createDialogue = require("../model/owner/customer/createDialogue.js");
-const createCart = require("../model/owner/customer/createCart.js");
+const createDialogue = require("../model/customer/createDialogue.js");
+const createCart = require("../model/customer/createCart.js");
 const requireCategory = require("../model/requireCategory.js");
 const requireDialogue = require("../model/customer/requireDialogue.js");
-const requireCart = require("../model/owner/customer/requireCart.js");
+const requireCart = require("../model/customer/requireCart.js");
 const requireMenu = require("../model/requireMenu.js");
-const deleteCart = require("../model/owner/customer/deleteCart.js");
-const updateCart = require("../model/owner/customer/updateCart.js");
+const deleteCart = require("../model/customer/deleteCart.js");
+const updateCart = require("../model/customer/updateCart.js");
 
 const config = require("../config/config.js");
 

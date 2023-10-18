@@ -1,7 +1,7 @@
-const createCart = require('../model/owner/customer/createCart.js');
-const deleteSingleCart = require('../model/owner/customer/deleteSingleCart.js');
-const requireCart = require('../model/owner/customer/requireCart.js');
-const updateSingleCart = require('../model/owner/customer/updateSingleCart.js');
+const createCart = require('../model/customer/createCart.js');
+const deleteSingleCart = require('../model/customer/deleteSingleCart.js');
+const requireCart = require('../model/customer/requireCart.js');
+const updateSingleCart = require('../model/customer/updateSingleCart.js');
 
 exports.postCart = async function(req, res, next) {
 
