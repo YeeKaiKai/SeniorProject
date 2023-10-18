@@ -24,7 +24,7 @@ exports.getCart = async function(req, res, next) {
 
 }
 
-exports.updateCart = async function(req, res, next) {
+exports.patchCart = async function(req, res, next) {
 
     let customerID = req.body.customerID;
     let restaurantID = req.body.restaurantID;
@@ -37,6 +37,7 @@ exports.updateCart = async function(req, res, next) {
 }
 
 exports.deleteCart = async function(req, res, next) {
+    
     let customerID = req.body.customerID;
     let restaurantID = req.body.restaurantID;
     let restaurantName = req.body.restaurantName;

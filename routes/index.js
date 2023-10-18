@@ -9,10 +9,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/chat/', chatgpt.postDiagolue);
+router.post('/chat', chatgpt.postDiagolue);
 
-router.get('/menu/', menu.getMenu);
-router.get('/category/', menu.getCategory);
+router.get('/menu', menu.getMenu);
+router.get('/category', menu.getCategory);
 router.get('/chat/:customerID', chatgpt.getDialogue);
 
 module.exports = router;
