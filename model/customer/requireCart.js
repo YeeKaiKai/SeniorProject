@@ -18,11 +18,6 @@ module.exports = async function (restaurantID, restaurantName, customerID) {
                 if (query_err) {
                     reject(query_err);
                 } 
-
-                // 兩次轉換會變乾淨
-                results = JSON.stringify(results);
-                results = JSON.parse(results);
-
                 resolve(results);
             })
             if (connection) {
