@@ -1,16 +1,16 @@
-const createDialogue = require("../model/createDialogue.js");
-const createCart = require("../model/createCart.js");
+const createDialogue = require("../model/owner/customer/createDialogue.js");
+const createCart = require("../model/owner/customer/createCart.js");
 const requireCategory = require("../model/requireCategory.js");
-const requireDialogue = require("../model/requireDialogue.js");
-const requireCart = require("../model/requireCart.js");
+const requireDialogue = require("../model/customer/requireDialogue.js");
+const requireCart = require("../model/owner/customer/requireCart.js");
 const requireMenu = require("../model/requireMenu.js");
-const deleteCart = require("../model/deleteCart.js");
+const deleteCart = require("../model/owner/customer/deleteCart.js");
+const updateCart = require("../model/owner/customer/updateCart.js");
 
 const config = require("../config/config.js");
 
 const fs = require("fs");
 const path = require("path");
-const updateCart = require("../model/updateCart.js");
 
 /**
  * 利用 ChatGPT 的回覆判斷是否為點餐
@@ -150,6 +150,7 @@ exports.postDiagolue = async function(req, res, next) {
 exports.getDialogue = async function (req, res, next) {
 
     let customerID = req.params.customerID;
+    let restaurantName = "MORNING001";
 
     let dialogue = await requireDialogue(customerID, restaurantName);
 
