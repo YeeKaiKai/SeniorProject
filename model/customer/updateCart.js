@@ -11,29 +11,31 @@ const getPool = require('../connectionDB.js');
 
 module.exports = async function (customerID, quantity, food, restaurantID, restaurantName) {
 
-    const pool = getPool(restaurantName);
-    for (let num = 0; num < quantity.length; num++) {
-        let sql =
-        `
-        UPDATE \`ORDER\` 
-        SET Amount = ${quantity[num]} 
-        WHERE Food = "${food[num]}"
-        AND CustomerID = "${customerID}" 
-        AND RestaurantID = "${restaurantID}"
-        `;
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                throw conn_err;
-            }
-            connection.query(sql, (query_err, results) => {
-                if (query_err) {
-                    throw query_err;
+    return new Promise((resolve, reject) => {
+        const pool = getPool(restaurantName);
+        for (let num = 0; num < quantity.length; num++) {
+            let sql =
+            `
+            UPDATE \`ORDER\` 
+            SET Amount = ${quantity[num]} 
+            WHERE Food = "${food[num]}"
+            AND CustomerID = "${customerID}" 
+            AND RestaurantID = "${restaurantID}"
+            `;
+            pool.getConnection((conn_err, connection) => {
+                if (conn_err) {
+                    throw conn_err;
                 }
-                return results;
+                connection.query(sql, (query_err, results) => {
+                    if (query_err) {
+                        throw query_err;
+                    }
+                    resolve(results);
+                })
+                if (connection) {
+                    connection.release();
+                }
             })
-            if (connection) {
-                connection.release();
-            }
-        })
-    }
+        }
+    })
 }
