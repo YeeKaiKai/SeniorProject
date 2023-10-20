@@ -21,6 +21,7 @@ module.exports = async function (customerID, quantity, food, restaurantID, resta
             WHERE Food = "${food[num]}"
             AND CustomerID = "${customerID}" 
             AND RestaurantID = "${restaurantID}"
+            AND Confirmed = False
             `;
             pool.getConnection((conn_err, connection) => {
                 if (conn_err) {
