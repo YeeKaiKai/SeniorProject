@@ -30,21 +30,33 @@ CREATE TABLE MENU
 
 CREATE TABLE FOOD_CUSTOM
 (
-  Food VARCHAR(30) NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
   Custom VARCHAR(20) NOT NULL,
-  PRIMARY KEY (Food, RestaurantID, Custom),
-  FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
+  MinOption INT NOT NULL,
+  MaxOption INT NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  PRIMARY KEY (Custom, RestaurantID),
+  FOREIGN KEY (RestaurantID) REFERENCES RESTAURANT(RestaurantID)
 );
 
 CREATE TABLE CUSTOM_OPTION
 (
+  `Option` VARCHAR(20) NOT NULL,
+  Custom VARCHAR(20) NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  Price INT NULL,
+  PRIMARY KEY (`Option`, Custom, RestaurantID),
+  FOREIGN KEY (Custom, RestaurantID) REFERENCES FOOD_CUSTOM(Custom, RestaurantID)
+  ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE CUSTOMIZE
+(
+  Custom VARCHAR(20) NOT NULL,
   Food VARCHAR(30) NOT NULL,
   RestaurantID CHAR(3) NOT NULL,
-  Custom VARCHAR(20) NOT NULL,
-  OptionName VARCHAR(20) NOT NULL,
-  PRIMARY KEY (Food, RestaurantID, Custom, OptionName),
-  FOREIGN KEY (Food, RestaurantID, Custom) REFERENCES FOOD_CUSTOM(Food, RestaurantID, Custom)
+  PRIMARY KEY (Custom, Food, RestaurantID),
+  FOREIGN KEY (Custom, RestaurantID) REFERENCES FOOD_CUSTOM(Custom, RestaurantID),
+  FOREIGN KEY (Food) REFERENCES MENU(Food)
 );
 
 CREATE TABLE CUSTOMER
