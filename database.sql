@@ -66,7 +66,7 @@ CREATE TABLE CUSTOMER
   CustomerID INT NOT NULL AUTO_INCREMENT,
   TableNumber CHAR(3) NULL,
   RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (CustomerID),
+  PRIMARY KEY (CustomerID, RestaurantID),
   FOREIGN KEY (TableNumber, RestaurantID) REFERENCES `TABLE`(TableNumber, RestaurantID)
 );
 
@@ -75,8 +75,9 @@ CREATE TABLE DIALOGUE
   Content VARCHAR(200) NOT NULL,
   DialogueID INT NOT NULL AUTO_INCREMENT,
   CustomerID INT NOT NULL,
-  PRIMARY KEY (DialogueID, CustomerID),
-  FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID)
+  RestaurantID CHAR(3) NOT NULL,
+  PRIMARY KEY (DialogueID, CustomerID, RestaurantID),
+  FOREIGN KEY (CustomerID, RestaurantID) REFERENCES CUSTOMER(CustomerID, RestaurantID)
 );
 
 CREATE TABLE CART
@@ -89,7 +90,7 @@ CREATE TABLE CART
   Note VARCHAR(100) NULL,
   Confirmed BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (CustomerID, Food, CustomID, RestaurantID),
-  FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID),
+  FOREIGN KEY (CustomerID, RestaurantID) REFERENCES CUSTOMER(CustomerID, RestaurantID),
   FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
 );
 
