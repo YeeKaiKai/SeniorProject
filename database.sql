@@ -79,7 +79,7 @@ CREATE TABLE DIALOGUE
   FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID)
 );
 
-CREATE TABLE `ORDER`
+CREATE TABLE CART
 (
   Amount INT NOT NULL,
   CustomerID INT NOT NULL,
@@ -93,7 +93,18 @@ CREATE TABLE `ORDER`
   FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
 );
 
-CREATE TABLE ORDER_CUSTOMIZE
+CREATE TABLE `ORDER`
+(
+  CustomerID INT NOT NULL,
+  Food VARCHAR(30) NOT NULL,
+  CustomID INT NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  TotalSum INT NOT NULL,
+  PRIMARY KEY (CustomerID, Food, CustomID, RestaurantID),
+  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantID) REFERENCES CART(CustomerID, Food, CustomID, RestaurantID)
+);
+
+CREATE TABLE CART_CUSTOMIZE
 (
   CustomerID INT NOT NULL,
   Food VARCHAR(30) NOT NULL,
@@ -102,6 +113,6 @@ CREATE TABLE ORDER_CUSTOMIZE
   Custom VARCHAR(20) NOT NULL,
   RestaurantID CHAR(3) NOT NULL,
   PRIMARY KEY (CustomerID, Food, CustomID, `Option`, Custom, RestaurantID),
-  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantID) REFERENCES `ORDER`(CustomerID, Food, CustomID, RestaurantID),
+  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantID) REFERENCES `CART`(CustomerID, Food, CustomID, RestaurantID),
   FOREIGN KEY (`Option`, Custom, RestaurantID) REFERENCES CUSTOM_OPTION(`Option`, Custom, RestaurantID)
 );
