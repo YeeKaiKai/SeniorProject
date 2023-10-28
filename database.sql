@@ -56,7 +56,7 @@ CREATE TABLE CUSTOMIZE
   RestaurantID CHAR(3) NOT NULL,
   PRIMARY KEY (Custom, Food, RestaurantID),
   FOREIGN KEY (Custom, RestaurantID) REFERENCES FOOD_CUSTOM(Custom, RestaurantID),
-  FOREIGN KEY (Food) REFERENCES MENU(Food)
+  FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
 );
 
 CREATE TABLE CUSTOMER
@@ -84,10 +84,24 @@ CREATE TABLE `ORDER`
   Amount INT NOT NULL,
   CustomerID INT NOT NULL,
   Food VARCHAR(30) NOT NULL,
+  CustomID INT NOT NULL,
   RestaurantID CHAR(3) NOT NULL,
   Note VARCHAR(100) NULL,
   Confirmed BOOLEAN NOT NULL DEFAULT FALSE,
-  PRIMARY KEY (CustomerID, Food, RestaurantID),
+  PRIMARY KEY (CustomerID, Food, CustomID, RestaurantID),
   FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID),
   FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
+);
+
+CREATE TABLE ORDER_CUSTOMIZE
+(
+  CustomerID INT NOT NULL,
+  Food VARCHAR(30) NOT NULL,
+  CustomID INT NOT NULL,
+  `Option` VARCHAR(20) NOT NULL,
+  Custom VARCHAR(20) NOT NULL,
+  RestaurantID CHAR(3) NOT NULL,
+  PRIMARY KEY (CustomerID, Food, CustomID, `Option`, Custom, RestaurantID),
+  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantID) REFERENCES `ORDER`(CustomerID, Food, CustomID, RestaurantID),
+  FOREIGN KEY (`Option`, Custom, RestaurantID) REFERENCES CUSTOM_OPTION(`Option`, Custom, RestaurantID)
 );
