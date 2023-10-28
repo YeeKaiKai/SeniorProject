@@ -5,7 +5,7 @@ module.exports = async function (customerID, food, restaurantID, restaurantName)
     return new Promise((resolve, reject) => {
         let sql = 
         `
-        DELETE FROM \`ORDER\`
+        DELETE FROM \`CART\`
         WHERE CustomerID = "${customerID}" AND Food = "${food}" AND RestaurantID = "${restaurantID}";
         `;
         const pool = getPool(restaurantName);

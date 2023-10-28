@@ -14,7 +14,7 @@ module.exports = async function (customerID, quantity, food, restaurantID, resta
     return new Promise((resolve, reject) => {
         let sql =
         `
-        UPDATE \`ORDER\` 
+        UPDATE \`CART\` 
         SET Amount = ${quantity} 
         WHERE Food = "${food}"
         AND CustomerID = "${customerID}" 

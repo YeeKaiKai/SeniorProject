@@ -16,7 +16,7 @@ module.exports = async function (customerID, quantity, food, restaurantID, resta
         for (let num = 0; num < quantity.length; num++) {
             let sql =
             `
-            INSERT INTO \`ORDER\`(CustomerID, Food, Amount, RestaurantID)
+            INSERT INTO \`CART\`(CustomerID, Food, Amount, RestaurantID)
             VALUES ("${customerID}", "${food[num]}", ${quantity[num]}, "${restaurantID}")
             ON DUPLICATE KEY
             UPDATE Amount = ${quantity[num]}

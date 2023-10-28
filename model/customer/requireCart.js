@@ -6,7 +6,7 @@ module.exports = async function (restaurantID, restaurantName, customerID) {
         let sql = 
         `
         SELECT Food, Amount, Note 
-        FROM \`ORDER\`
+        FROM \`CART\`
         WHERE Confirmed = FALSE AND RestaurantID = "${restaurantID}" AND CustomerID = "${customerID}"
         `;
         const pool = getPool(restaurantName);

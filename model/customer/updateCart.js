@@ -16,7 +16,7 @@ module.exports = async function (customerID, quantity, food, restaurantID, resta
         for (let num = 0; num < quantity.length; num++) {
             let sql =
             `
-            UPDATE \`ORDER\` 
+            UPDATE \`CART\` 
             SET Amount = ${quantity[num]} 
             WHERE Food = "${food[num]}"
             AND CustomerID = "${customerID}" 

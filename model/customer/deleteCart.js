@@ -6,7 +6,7 @@ module.exports = async function (customerID, food, restaurantID, restaurantName)
         for (let num = 0; num < food.length; num++) {
             let sql = 
             `
-            DELETE FROM \`ORDER\`
+            DELETE FROM \`CART\`
             WHERE CustomerID = "${customerID}" AND Food = "${food[num]}" AND RestaurantID = "${restaurantID}" AND Confirmed = False;
             `;
             const pool = getPool(restaurantName);

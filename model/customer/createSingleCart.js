@@ -16,7 +16,7 @@ module.exports = async function (customerID, quantity, food, note, restaurantID,
         const pool = getPool(restaurantName);
         let sql =
         `
-        INSERT INTO \`ORDER\`(CustomerID, Food, Amount, Note, RestaurantID)
+        INSERT INTO \`CART\`(CustomerID, Food, Amount, Note, RestaurantID)
         VALUES ("${customerID}", "${food}", ${quantity}, "${note}", "${restaurantID}")
         ON DUPLICATE KEY
         UPDATE Amount = ${quantity}

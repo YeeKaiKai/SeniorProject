@@ -32,7 +32,7 @@ module.exports = async function (amount, custom, option, food, customID, custome
                 // 有幾筆該食物的訂單
                 let promises = [];
                 let countSql = `SELECT COUNT(DISTINCT CustomID) as customIDLength 
-                FROM \`ORDER_CUSTOMIZE\` 
+                FROM \`CART_CUSTOMIZE\` 
                 WHERE CustomerID = ? 
                 AND Food = ? 
                 AND Custom = ? 
@@ -51,7 +51,7 @@ module.exports = async function (amount, custom, option, food, customID, custome
 
                     // 先看該食物是否存在相同之客製化
                     let checkSql = `SELECT COUNT(*) as count 
-                    FROM ORDER_CUSTOMIZE 
+                    FROM CART_CUSTOMIZE 
                     WHERE CustomID = ? 
                     AND Food = ? 
                     AND CustomerID = ? 
@@ -79,10 +79,10 @@ module.exports = async function (amount, custom, option, food, customID, custome
 
                     // 該食物已存在所有客製化組合重複
                     if (counts.every(count => count > 0 )) {
-                        let updateSql = `UPDATE \`ORDER\` 
+                        let updateSql = `UPDATE \`CART\` 
                         SET Amount = 
                             (SELECT Amount 
-                            FROM \`ORDER\` 
+                            FROM \`CART\` 
                             WHERE CustomID = ? 
                             AND Food = ? 
                             AND CustomerID = ? 
@@ -111,7 +111,7 @@ module.exports = async function (amount, custom, option, food, customID, custome
                         })
                     } else {
                         // 該客製化食物訂單不存在
-                        let insertSql = `INSERT INTO ORDER_CUSTOMIZE(customerID, food, customID, option, custom, restaurantID) 
+                        let insertSql = `INSERT INTO CART_CUSTOMIZE(customerID, food, customID, option, custom, restaurantID) 
                         VALUES (?, ?, ?, ?, ?, ?)`
                         let _promises = [];
                         for(let index1 = 0; index1 < custom.length; index1++) {

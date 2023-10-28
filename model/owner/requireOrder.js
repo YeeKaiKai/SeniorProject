@@ -7,7 +7,7 @@ module.exports = async function (restaurantName) {
         `
         SELECT * 
         FROM \`ORDER\`
-        WHERE Confirmed = TRUE
+        WHERE restaurantName = ${restaurantName}
         `;
         const pool = getPool(restaurantName);
         pool.getConnection((conn_err, connection) => {
