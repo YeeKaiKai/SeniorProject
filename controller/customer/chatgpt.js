@@ -1,13 +1,15 @@
-const createDialogue = require("../model/customer/createDialogue.js");
-const createCart = require("../model/customer/createCart.js");
-const requireCategory = require("../model/requireCategory.js");
-const requireDialogue = require("../model/customer/requireDialogue.js");
-const requireCart = require("../model/customer/requireCart.js");
-const requireMenu = require("../model/requireMenu.js");
-const deleteCart = require("../model/customer/deleteCart.js");
-const updateCart = require("../model/customer/updateCart.js");
+const createDialogue = require("../../model/customer/createDialogue.js");
+const createCart = require("../../model/customer/createCart.js");
+const requireCategory = require("../../model/requireCategory.js");
+const requireDialogue = require("../../model/customer/requireDialogue.js");
+const requireCart = require("../../model/customer/requireCart.js");
+const requireMenu = require("../../model/requireMenu.js");
+const deleteCart = require("../../model/customer/deleteCart.js");
+const updateCart = require("../../model/customer/updateCart.js");
 
-const config = require("../config/config.js");
+const cartToOrder = require("../../model/customer/cartToOrder.js");
+
+const config = require("../../config/config.js");
 
 const fs = require("fs");
 const path = require("path");
@@ -24,14 +26,10 @@ function isOrdering(text) {
 
 }
 
-function isCancelling(text) {
+function isConfirming(text) {
 
-    const pattern = /已為您取消(.+)，還需要什麼呢？$/;
-    const match = pattern.exec(text);
-
+    const pattern = /(.+)謝謝您的光臨！$/;
     return pattern.test(text);
-
-    
 }
 
 function toChinese(text) {
@@ -49,6 +47,19 @@ function toChinese(text) {
     return text;
 }
 
+function extractFoods(str) {
+
+    const foodPattern = /(\d+)[\u4e00-\u9fa5]{1}([\u4e00-\u9fa5]+)/g;
+    let match;
+    const amounts = [];
+    const foods = [];
+    while ((match = foodPattern.exec(str)) !== null) {
+        amounts.push(parseInt(match[1], 10));
+        foods.push(match[2]);
+    }
+    return [amounts, foods];
+}
+
 /**
  * 顧客發送對話給 ChatGPT
  * @param {{text: string}} req 
@@ -61,7 +72,7 @@ exports.postDiagolue = async function(req, res, next) {
     let customerID = 1;
     let restaurantID = "001";
     let text = req.body.text;
-    let restaurantName = "MORNING001";
+    let restaurantName = "webSocket";
 
     // 引入 ChatGPT
     const importDynamic = new Function( 'modulePath', 'return import(modulePath)', );
@@ -94,7 +105,6 @@ exports.postDiagolue = async function(req, res, next) {
     } else {
         prompt = command + menu + text;
     }
-    console.log(prompt);
     const chatgptResponse = await api.sendMessage(prompt);    
     const chatting = "顧客：" + text + "\n" + "服務生：" + chatgptResponse.text;
 
@@ -112,19 +122,6 @@ exports.postDiagolue = async function(req, res, next) {
         const orderPart = (chatgptText.match(/點了(.*?)(?=取消|改為|還需要|$)/) || [])[1];
         const changePart = (chatgptText.match(/改為(.*?)(?=取消|點了|還需要|$)/) || [])[1];
 
-        const foodPattern = /(\d+)[\u4e00-\u9fa5]{1}([\u4e00-\u9fa5]+)/g;
-
-        const extractFoods = (str) => {
-            let match;
-            const amounts = [];
-            const foods = [];
-            while ((match = foodPattern.exec(str)) !== null) {
-                amounts.push(parseInt(match[1], 10));
-                foods.push(match[2]);
-            }
-            return [amounts, foods];
-        };
-
         const [orderAmounts, orderFoods] = extractFoods(orderPart || "");
         const [cancelAmounts, cancelFoods] = extractFoods(cancelPart || "");
         const [changeAmounts, changeFoods] = extractFoods(changePart || "");
@@ -140,6 +137,11 @@ exports.postDiagolue = async function(req, res, next) {
         if (changeAmounts.length > 0) {
             updateCart(customerID, changeAmounts, changeFoods, restaurantID, restaurantName);
         }
+    } else if (isConfirming(chatgptText)) {
+
+        const [finalAmount, finalFoods] = extractFoods(chatgptText);
+        cartToOrder(customerID, finalAmount, finalFoods, restaurantID, restaurantName);
+
     }
     
     res.json({
@@ -150,7 +152,7 @@ exports.postDiagolue = async function(req, res, next) {
 exports.getDialogue = async function (req, res, next) {
 
     let customerID = req.params.customerID;
-    let restaurantName = "MORNING001";
+    let restaurantName = "webSocket";
 
     let dialogue = await requireDialogue(customerID, restaurantName);
 

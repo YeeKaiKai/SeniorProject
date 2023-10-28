@@ -3,18 +3,16 @@ const requireOrder = require('../model/owner/requireOrder.js');
 
 
 exports.deleteOrder = async function(req, res, next) {
-        
+    
 }
 
 exports.getOrder = async function(req, res, next) {
-    
-    // test
-    let restaurantName = "MORNING001"; 
-    // test
 
-    // let restaurantName = req.body.restaurantName;
+    let customerID = req.body.customerID;
+    let restaurantID = req.body.restaurantID;
+    let restaurantName = req.body.restaurantName;
 
-    let results = await requireOrder(restaurantName);
+    let results = await requireOrder(restaurantID, restaurantName, customerID);
     res.send(results);
 
 }
