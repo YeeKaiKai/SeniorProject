@@ -5,18 +5,19 @@ const getPool = require('../connectionDB.js');
  * @param {*} customerID 
  * @param {*} quantity 
  * @param {*} food 
+ * @param {*} note
  * @param {*} restaurantID 
  * @param {*} restaurantName
  */
 
-module.exports = async function (customerID, quantity, food, restaurantID, restaurantName) {
+module.exports = async function (customerID, quantity, food, note, restaurantID, restaurantName) {
 
     return new Promise((resolve, reject) => {
         const pool = getPool(restaurantName);
         let sql =
         `
-        INSERT INTO \`ORDER\`(CustomerID, Food, Amount, RestaurantID)
-        VALUES ("${customerID}", "${food}", ${quantity}, "${restaurantID}")
+        INSERT INTO \`ORDER\`(CustomerID, Food, Amount, Note, RestaurantID)
+        VALUES ("${customerID}", "${food}", ${quantity}, "${note}", "${restaurantID}")
         ON DUPLICATE KEY
         UPDATE Amount = ${quantity}
         `;
