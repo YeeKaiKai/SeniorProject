@@ -1,6 +1,6 @@
 const getPool = require('../connectionDB.js');
 
-module.exports = async function (oldCustom, newCustom, minOption, maxOption, restaurantID, restaurantName) {
+module.exports = async function (oldCustom, newCustom, minOption, maxOption, restaurantName) {
 
     return new Promise((resolve, reject) => {
         let sql =
@@ -10,7 +10,7 @@ module.exports = async function (oldCustom, newCustom, minOption, maxOption, res
         MinOption = "${minOption}",
         MaxOption = "${maxOption}"
         WHERE Custom = "${oldCustom}"
-        AND RestaurantID = "${restaurantID}"
+        AND RestaurantName = "${restaurantName}"
         `;
         const pool = getPool(restaurantName);
         pool.getConnection((conn_err, connection) => {

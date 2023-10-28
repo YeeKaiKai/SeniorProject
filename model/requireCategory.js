@@ -1,12 +1,13 @@
 const getPool = require("../model/connectionDB.js");
 
-module.exports = async function (restaurantID, restaurantName) {
+module.exports = async function (restaurantName) {
 
     return new Promise((resolve, reject) => {
         let sql = 
         `
         SELECT DISTINCT Category
-        FROM MENU;
+        FROM MENU
+        WHERE RestaurantName = "${restaurantName}";
         `;
         const pool = getPool(restaurantName);
         pool.getConnection((conn_err, connection) => {

@@ -1,13 +1,13 @@
 const getPool = require('../connectionDB.js');
 
-module.exports = async function (custom, restaurantID, restaurantName) {
+module.exports = async function (custom, restaurantName) {
 
     return new Promise((resolve, reject) => {
         let sql = 
         `
         DELETE FROM FOOD_CUSTOM
         WHERE Custom = "${custom}" 
-        AND RestaurantID = "${restaurantID}";
+        AND RestaurantName = "${restaurantName}";
         `;
         const pool = getPool(restaurantName);
         pool.getConnection((conn_err, connection) => {

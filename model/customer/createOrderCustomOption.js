@@ -8,11 +8,10 @@ const getPool = require('../connectionDB.js');
  * @param {*} food
  * @param {*} customID
  * @param {*} customerID
- * @param {*} restaurantID 
  * @param {*} restaurantName
  */
 
-module.exports = async function (amount, custom, option, food, customID, customerID, restaurantID, restaurantName) {
+module.exports = async function (amount, custom, option, food, customID, customerID, restaurantName) {
 
     const pool = getPool(restaurantName);
     pool.getConnection((conn_err, connection) => {
@@ -37,8 +36,8 @@ module.exports = async function (amount, custom, option, food, customID, custome
                 AND Food = ? 
                 AND Custom = ? 
                 AND \`Option\` = ? 
-                AND RestaurantID = ?`
-                connection.query(countSql, [customerID, food, custom, option, restaurantID], (query_err, results) => {
+                AND RestaurantName = ?`
+                connection.query(countSql, [customerID, food, custom, option, restaurantName], (query_err, results) => {
                     if (query_err) {
                         if (connection) {
                             connection.rollback(() => {
@@ -57,12 +56,12 @@ module.exports = async function (amount, custom, option, food, customID, custome
                     AND CustomerID = ? 
                     AND Custom = ? 
                     AND \`Option\` = ? 
-                    AND RestaurantID = ?`
+                    AND RestaurantName = ?`
                     for (let index0 = 1; index0 <= customIDLength; index0++) {
                         for (let index1 = 0; index1 < custom.length; index1++) {
                             for (let index2 = 0; index2 < option.length; index2++) {
                                 promises.push(new Promise((resolve, reject) => {
-                                    connection.query(checkSql, [index0, food, customerID, custom[index1], option[index1][index2], restaurantID], (query_err, results) => {
+                                    connection.query(checkSql, [index0, food, customerID, custom[index1], option[index1][index2], restaurantName], (query_err, results) => {
                                         if (query_err) {
                                             reject(query_err);
                                         } else {
@@ -86,13 +85,13 @@ module.exports = async function (amount, custom, option, food, customID, custome
                             WHERE CustomID = ? 
                             AND Food = ? 
                             AND CustomerID = ? 
-                            AND RestaurantID = ?) 
+                            AND RestaurantName = ?) 
                             + ? 
                         WHERE CustomID = ? 
                         AND Food = ?
                         AND CustomerID = ? 
-                        AND RestaurantID = ?`
-                        connection.query(updateSql, [customID, food, customerID, restaurantID, amount, customID, food, customerID, restaurantID], (query_err, results) => {
+                        AND RestaurantName = ?`
+                        connection.query(updateSql, [customID, food, customerID, restaurantName, amount, customID, food, customerID, restaurantName], (query_err, results) => {
                             if (query_err) {
                                 connection.rollback(() => {
                                     throw query_err;
@@ -111,13 +110,13 @@ module.exports = async function (amount, custom, option, food, customID, custome
                         })
                     } else {
                         // 該客製化食物訂單不存在
-                        let insertSql = `INSERT INTO CART_CUSTOMIZE(customerID, food, customID, option, custom, restaurantID) 
+                        let insertSql = `INSERT INTO CART_CUSTOMIZE(customerID, food, customID, option, custom, RestaurantName) 
                         VALUES (?, ?, ?, ?, ?, ?)`
                         let _promises = [];
                         for(let index1 = 0; index1 < custom.length; index1++) {
                             for(let index2 = 0; index2 < option.length; index2++) {
                                 _promises.push(new Promise((resolve, reject) => {
-                                    connection.query(insertSql, [customerID, food, customID, option[index1][index2], custom[index1], restaurantID], (query_err, results) => {
+                                    connection.query(insertSql, [customerID, food, customID, option[index1][index2], custom[index1], restaurantName], (query_err, results) => {
                                         if (query_err) {
                                             reject(query_err);
                                         } else {

@@ -5,11 +5,10 @@ const getPool = require('../connectionDB.js');
  * @param {*} customerID 
  * @param {*} quantity 
  * @param {*} food 
- * @param {*} restaurantID 
  * @param {*} restaurantName
  */
 
-module.exports = async function (custom, oldOption, newOption, price, restaurantID, restaurantName) {
+module.exports = async function (custom, oldOption, newOption, price, restaurantName) {
 
     return new Promise((resolve, reject) => {
         let result;
@@ -27,7 +26,7 @@ module.exports = async function (custom, oldOption, newOption, price, restaurant
                 Price = "${price[num]}"
                 WHERE Custom = "${custom}" 
                 AND \`Option\` = "${oldOption[num]}"
-                AND RestaurantID = "${restaurantID}";
+                AND RestaurantName = "${restaurantName}";
                 `;
                 console.log(sql);
                 connection.query(sql, (query_err, results) => {

@@ -5,11 +5,10 @@ const getPool = require('../connectionDB.js');
  * @param {*} customerID 
  * @param {*} quantity 
  * @param {*} food 
- * @param {*} restaurantID 
  * @param {*} restaurantName
  */
 
-module.exports = async function (customerID, quantity, food, restaurantID, restaurantName) {
+module.exports = async function (customerID, quantity, food, restaurantName) {
     
     return new Promise((resolve, reject) => {
         const pool = getPool(restaurantName);
@@ -19,7 +18,7 @@ module.exports = async function (customerID, quantity, food, restaurantID, resta
             UPDATE \`ORDER\` 
             SET Confirmed = TRUE 
             WHERE CustomerID = "${customerID}" 
-            AND RestaurantID = "${restaurantID}"
+            AND RestaurantName = "${restaurantName}"
             `;
             pool.getConnection((conn_err, connection) => {
                 if (conn_err) {

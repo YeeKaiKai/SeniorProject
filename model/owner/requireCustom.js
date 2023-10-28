@@ -3,16 +3,15 @@ const getPool = require('../connectionDB.js');
 /**
  *
  * @param {String} restaurantName
- * @param {String} restaurantID
  */
-module.exports = async function (restaurantName, restaurantID) {
+module.exports = async function (restaurantName) {
 
     return new Promise((resolve, reject) => {
         let sql = 
         `
         SELECT *
         FROM FOOD_CUSTOM
-        WHERE restaurantID = "${restaurantID}";
+        WHERE RestaurantName = "${restaurantName}";
         `;
         const pool = getPool(restaurantName);
         pool.getConnection((conn_err, connection) => {

@@ -1,18 +1,17 @@
 CREATE TABLE RESTAURANT
 (
-  RestaurantID CHAR(3) NOT NULL,
   RestaurantName VARCHAR(30) NOT NULL,
   Address VARCHAR(60) NOT NULL,
-  PRIMARY KEY (RestaurantID)
+  PRIMARY KEY (RestaurantName)
 );
 
 CREATE TABLE `TABLE`
 (
   TableNumber CHAR(3) NOT NULL,
   TableAmount INT NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (TableNumber, RestaurantID),
-  FOREIGN KEY (RestaurantID) REFERENCES RESTAURANT(RestaurantID)
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (TableNumber, RestaurantName),
+  FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
 );
 
 CREATE TABLE MENU
@@ -23,9 +22,9 @@ CREATE TABLE MENU
   Category VARCHAR(20) NOT NULL,
   Ingredient VARCHAR(100) NOT NULL,
   Price INT NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (Food, RestaurantID),
-  FOREIGN KEY (RestaurantID) REFERENCES RESTAURANT(RestaurantID)
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (Food, RestaurantName),
+  FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
 );
 
 CREATE TABLE FOOD_CUSTOM
@@ -33,19 +32,19 @@ CREATE TABLE FOOD_CUSTOM
   Custom VARCHAR(20) NOT NULL,
   MinOption INT NOT NULL,
   MaxOption INT NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (Custom, RestaurantID),
-  FOREIGN KEY (RestaurantID) REFERENCES RESTAURANT(RestaurantID)
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (Custom, RestaurantName),
+  FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
 );
 
 CREATE TABLE CUSTOM_OPTION
 (
   `Option` VARCHAR(20) NOT NULL,
   Custom VARCHAR(20) NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
+  RestaurantName VARCHAR(30) NOT NULL,
   Price INT NULL,
-  PRIMARY KEY (`Option`, Custom, RestaurantID),
-  FOREIGN KEY (Custom, RestaurantID) REFERENCES FOOD_CUSTOM(Custom, RestaurantID)
+  PRIMARY KEY (`Option`, Custom, RestaurantName),
+  FOREIGN KEY (Custom, RestaurantName) REFERENCES FOOD_CUSTOM(Custom, RestaurantName)
   ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -53,10 +52,10 @@ CREATE TABLE CUSTOMIZE
 (
   Custom VARCHAR(20) NOT NULL,
   Food VARCHAR(30) NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (Custom, Food, RestaurantID),
-  FOREIGN KEY (Custom, RestaurantID) REFERENCES FOOD_CUSTOM(Custom, RestaurantID),
-  FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (Custom, Food, RestaurantName),
+  FOREIGN KEY (Custom, RestaurantName) REFERENCES FOOD_CUSTOM(Custom, RestaurantName),
+  FOREIGN KEY (Food, RestaurantName) REFERENCES MENU(Food, RestaurantName)
 );
 
 CREATE TABLE CUSTOMER
@@ -65,9 +64,9 @@ CREATE TABLE CUSTOMER
   ForHere BOOLEAN NOT NULL,
   CustomerID INT NOT NULL AUTO_INCREMENT,
   TableNumber CHAR(3) NULL,
-  RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (CustomerID, RestaurantID),
-  FOREIGN KEY (TableNumber, RestaurantID) REFERENCES `TABLE`(TableNumber, RestaurantID)
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (CustomerID, RestaurantName),
+  FOREIGN KEY (TableNumber, RestaurantName) REFERENCES `TABLE`(TableNumber, RestaurantName)
 );
 
 CREATE TABLE DIALOGUE
@@ -75,9 +74,9 @@ CREATE TABLE DIALOGUE
   Content VARCHAR(200) NOT NULL,
   DialogueID INT NOT NULL AUTO_INCREMENT,
   CustomerID INT NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (DialogueID, CustomerID, RestaurantID),
-  FOREIGN KEY (CustomerID, RestaurantID) REFERENCES CUSTOMER(CustomerID, RestaurantID)
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (DialogueID, CustomerID, RestaurantName),
+  FOREIGN KEY (CustomerID, RestaurantName) REFERENCES CUSTOMER(CustomerID, RestaurantName)
 );
 
 CREATE TABLE CART
@@ -86,12 +85,12 @@ CREATE TABLE CART
   CustomerID INT NOT NULL,
   Food VARCHAR(30) NOT NULL,
   CustomID INT NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
+  RestaurantName VARCHAR(30) NOT NULL,
   Note VARCHAR(100) NULL,
   Confirmed BOOLEAN NOT NULL DEFAULT FALSE,
-  PRIMARY KEY (CustomerID, Food, CustomID, RestaurantID),
-  FOREIGN KEY (CustomerID, RestaurantID) REFERENCES CUSTOMER(CustomerID, RestaurantID),
-  FOREIGN KEY (Food, RestaurantID) REFERENCES MENU(Food, RestaurantID)
+  PRIMARY KEY (CustomerID, Food, CustomID, RestaurantName),
+  FOREIGN KEY (CustomerID, RestaurantName) REFERENCES CUSTOMER(CustomerID, RestaurantName),
+  FOREIGN KEY (Food, RestaurantName) REFERENCES MENU(Food, RestaurantName)
 );
 
 CREATE TABLE `ORDER`
@@ -99,10 +98,10 @@ CREATE TABLE `ORDER`
   CustomerID INT NOT NULL,
   Food VARCHAR(30) NOT NULL,
   CustomID INT NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
+  RestaurantName VARCHAR(30) NOT NULL,
   TotalSum INT NOT NULL,
-  PRIMARY KEY (CustomerID, Food, CustomID, RestaurantID),
-  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantID) REFERENCES CART(CustomerID, Food, CustomID, RestaurantID)
+  PRIMARY KEY (CustomerID, Food, CustomID, RestaurantName),
+  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantName) REFERENCES CART(CustomerID, Food, CustomID, RestaurantName)
 );
 
 CREATE TABLE CART_CUSTOMIZE
@@ -112,8 +111,8 @@ CREATE TABLE CART_CUSTOMIZE
   CustomID INT NOT NULL,
   `Option` VARCHAR(20) NOT NULL,
   Custom VARCHAR(20) NOT NULL,
-  RestaurantID CHAR(3) NOT NULL,
-  PRIMARY KEY (CustomerID, Food, CustomID, `Option`, Custom, RestaurantID),
-  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantID) REFERENCES `CART`(CustomerID, Food, CustomID, RestaurantID),
-  FOREIGN KEY (`Option`, Custom, RestaurantID) REFERENCES CUSTOM_OPTION(`Option`, Custom, RestaurantID)
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (CustomerID, Food, CustomID, `Option`, Custom, RestaurantName),
+  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantName) REFERENCES `CART`(CustomerID, Food, CustomID, RestaurantName),
+  FOREIGN KEY (`Option`, Custom, RestaurantName) REFERENCES CUSTOM_OPTION(`Option`, Custom, RestaurantName)
 );

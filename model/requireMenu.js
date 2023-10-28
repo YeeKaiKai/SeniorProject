@@ -1,6 +1,6 @@
 const getPool = require("../model/connectionDB.js");
 
-module.exports = async function (restaurantID, restaurantName) {
+module.exports = async function (restaurantName) {
     // let sql = 
     // `
     // SELECT Content
@@ -39,7 +39,7 @@ module.exports = async function (restaurantID, restaurantName) {
         `
         SELECT Food, Description, Quantity, Category, Ingredient, Price
         FROM MENU
-        WHERE restaurantID = "${restaurantID}";
+        WHERE RestaurantName = "${restaurantName}";
         `;
         const pool = getPool(restaurantName);
         pool.getConnection((conn_err, connection) => {
