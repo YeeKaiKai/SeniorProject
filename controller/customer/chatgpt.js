@@ -70,7 +70,6 @@ function extractFoods(str) {
 exports.postDiagolue = async function(req, res, next) {
 
     let customerID = 1;
-    let restaurantID = "001";
     let text = req.body.text;
     let restaurantName = "webSocket";
 
@@ -94,8 +93,8 @@ exports.postDiagolue = async function(req, res, next) {
     })
 
     let dialogue = await requireDialogue(customerID, restaurantName); // 先前該顧客與 ChatGPT 的對話
-    let menu = await requireMenu(restaurantID, restaurantName); // 店家菜單
-    let cart = await requireCart(restaurantID, restaurantName, customerID);
+    let menu = await requireMenu(restaurantName); // 店家菜單
+    let cart = await requireCart(restaurantName, customerID);
     cart = toChinese(cart);
     menu = toChinese(menu);
 
@@ -127,20 +126,20 @@ exports.postDiagolue = async function(req, res, next) {
         const [changeAmounts, changeFoods] = extractFoods(changePart || "");
 
         if (orderAmounts.length > 0) {
-            createCart(customerID, orderAmounts, orderFoods, restaurantID, restaurantName);
+            createCart(customerID, orderAmounts, orderFoods, restaurantName);
         }
 
         if (cancelAmounts.length > 0) {
-            deleteCart(customerID, cancelFoods, restaurantID, restaurantName);
+            deleteCart(customerID, cancelFoods, restaurantName);
         }
 
         if (changeAmounts.length > 0) {
-            updateCart(customerID, changeAmounts, changeFoods, restaurantID, restaurantName);
+            updateCart(customerID, changeAmounts, changeFoods, restaurantName);
         }
     } else if (isConfirming(chatgptText)) {
 
         const [finalAmount, finalFoods] = extractFoods(chatgptText);
-        cartToOrder(customerID, finalAmount, finalFoods, restaurantID, restaurantName);
+        cartToOrder(customerID, finalAmount, finalFoods, restaurantName);
 
     }
     

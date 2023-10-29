@@ -8,11 +8,9 @@ exports.deleteOrder = async function(req, res, next) {
 
 exports.getOrder = async function(req, res, next) {
 
-    let customerID = req.body.customerID;
-    let restaurantID = req.body.restaurantID;
     let restaurantName = req.body.restaurantName;
 
-    let results = await requireOrder(restaurantID, restaurantName, customerID);
+    let results = await requireOrder(restaurantName);
     res.send(results);
 
 }

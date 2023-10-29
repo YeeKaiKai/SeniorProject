@@ -3,10 +3,9 @@ const requireMenu = require("../model/requireMenu.js");
 
 exports.getCategory = async function (req, res, next) {
 
-    let restaurantID = req.body.restaurantID;
-    let restaurantName = req.body.restaurantName;
-
-    requireCategory(restaurantID, restaurantName).then((results) => {
+    let restaurantName = req.params.restaurantName;
+    
+    requireCategory(restaurantName).then((results) => {
         res.send(results);
     })
 
@@ -14,10 +13,9 @@ exports.getCategory = async function (req, res, next) {
 
 exports.getMenu = async function (req, res, next) {
 
-    let restaurantID = req.body.restaurantID;
-    let restaurantName = req.body.restaurantName;
-
-    let results = await requireMenu(restaurantID, restaurantName);
+    let restaurantName = req.params.restaurantName;
+    
+    let results = await requireMenu(restaurantName);
     res.send(results);
 
 }
