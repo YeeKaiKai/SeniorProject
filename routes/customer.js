@@ -18,7 +18,9 @@ router.post('/cart', cart.postCart);
 router.delete('/cart', cart.deleteCart);
 router.patch('/cart', cart.patchCart);
 
-router.post('/custom', custom.postOrderCustomOption);
+router.post('/:restaurantName/cart/customize', custom.postOrderCustomOption);
+router.get('/:restaurantName/cart/customize', custom.getCustomizeOption);
+
 
 
 module.exports = router;
