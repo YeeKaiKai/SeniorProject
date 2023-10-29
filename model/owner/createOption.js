@@ -10,7 +10,7 @@ const getPool = require('../connectionDB.js');
 module.exports = async function (custom, option, price, restaurantName) {
 
     return new Promise((resolve, reject) => {
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         let result;
     
         pool.getConnection((conn_err, connection) => {

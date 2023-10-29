@@ -11,7 +11,7 @@ const getPool = require('../connectionDB.js');
 module.exports = async function (customerID, quantity, food, restaurantName) {
     
     return new Promise((resolve, reject) => {
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         for (let num = 0; num < quantity.length; num++) {
             let sql =
             `

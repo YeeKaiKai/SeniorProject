@@ -19,7 +19,7 @@ module.exports = async function (customerID, quantity, food, restaurantName) {
         AND CustomerID = "${customerID}" 
         AND RestaurantName = "${restaurantName}"
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 throw conn_err;

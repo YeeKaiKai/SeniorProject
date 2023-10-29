@@ -12,7 +12,7 @@ const getPool = require('../connectionDB.js');
 module.exports = async function (customerID, quantity, food, note, restaurantName) {
 
     return new Promise((resolve, reject) => {
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         let sql =
         `
         INSERT INTO \`CART\`(CustomerID, CustomID, Food, Amount, Note, RestaurantName)

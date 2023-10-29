@@ -9,7 +9,7 @@ module.exports = async function (custom, restaurantName) {
         WHERE Custom = "${custom}" 
         AND RestaurantName = "${restaurantName}";
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 throw conn_err;

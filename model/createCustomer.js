@@ -8,7 +8,7 @@ module.exports = async function (name, forHere, restaurantName) {
         INSERT INTO CUSTOMER(Name, ForHere, RestaurantName)
         VALUES("${name}", "${forHere}", "${restaurantName}")
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 throw conn_err;

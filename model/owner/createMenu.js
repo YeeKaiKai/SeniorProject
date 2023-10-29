@@ -7,7 +7,7 @@ module.exports = async function (food, amount, price, ingredient, description, r
     INSERT INTO MENU(Food, Amount, Price, Ingredient, Description, RestaurantName)
     VALUES("${food}", ${amount}, ${price}, "${ingredient}", "${description}", "${restaurantName}")
     `;
-    const pool = getPool(restaurantName);
+    const pool = getPool();
     pool.getConnection((conn_err, connection) => {
         if (conn_err) {
             throw conn_err;

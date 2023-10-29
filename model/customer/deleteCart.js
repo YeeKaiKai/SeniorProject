@@ -9,7 +9,7 @@ module.exports = async function (customerID, food, restaurantName) {
             DELETE FROM \`CART\`
             WHERE CustomerID = "${customerID}" AND Food = "${food[num]}" AND RestaurantName = "${restaurantName}" AND Confirmed = False;
             `;
-            const pool = getPool(restaurantName);
+            const pool = getPool();
             pool.getConnection((conn_err, connection) => {
                 if (conn_err) {
                     throw conn_err;

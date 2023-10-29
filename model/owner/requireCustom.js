@@ -13,7 +13,7 @@ module.exports = async function (restaurantName) {
         FROM FOOD_CUSTOM
         WHERE RestaurantName = "${restaurantName}";
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 throw conn_err;

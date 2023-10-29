@@ -41,7 +41,7 @@ module.exports = async function (restaurantName) {
         FROM MENU
         WHERE RestaurantName = "${restaurantName}";
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 reject(conn_err);

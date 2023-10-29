@@ -5,23 +5,18 @@ const config = require("../config/config.js");
  * Create a Connection
  */
 
-// 每間餐廳各自的連接池
-const poolCache = {}; 
-
-function getPool(databaseName) {
-  if (!poolCache[databaseName]) {
-    poolCache[databaseName] = mysql.createPool({
+function getPool() {
+  let pool = mysql.createPool({
       connectionLimit: 20,
       host: config.DB_HOST,
       port: config.DB_PORT,
       user: config.USER,
       password: config.PASSWORD,
-      database: databaseName,
+      database: config.DATABASE,
       multipleStatements: true,
       timezone: "UTC"
-    });
-  }
-  return poolCache[databaseName];
+  });
+  return pool;
 }
 
 // const pool = mysql.createPool(

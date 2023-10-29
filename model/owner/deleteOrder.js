@@ -8,7 +8,7 @@ module.exports = async function (customerID, restaurantName) {
         DELETE FROM \`ORDER\`
         WHERE CustomerID = "${customerID}" AND RestaurantName = "${restaurantName}";
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 throw conn_err;

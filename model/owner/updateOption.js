@@ -12,7 +12,7 @@ module.exports = async function (custom, oldOption, newOption, price, restaurant
 
     return new Promise((resolve, reject) => {
         let result;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {

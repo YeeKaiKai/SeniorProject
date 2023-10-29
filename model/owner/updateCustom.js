@@ -12,7 +12,7 @@ module.exports = async function (oldCustom, newCustom, minOption, maxOption, res
         WHERE Custom = "${oldCustom}"
         AND RestaurantName = "${restaurantName}"
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 throw conn_err;

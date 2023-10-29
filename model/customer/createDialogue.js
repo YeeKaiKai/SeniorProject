@@ -8,7 +8,7 @@ module.exports = async function (customerID, dialogue, restaurantName) {
         INSERT INTO DIALOGUE(CustomerID, Content)
         VALUES("${customerID}", "${dialogue}")
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 throw conn_err;

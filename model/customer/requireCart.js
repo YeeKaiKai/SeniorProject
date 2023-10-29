@@ -9,7 +9,7 @@ module.exports = async function (restaurantName, customerID) {
         FROM \`CART\`
         WHERE Confirmed = FALSE AND RestaurantName = "${restaurantName}" AND CustomerID = "${customerID}"
         `;
-        const pool = getPool(restaurantName);
+        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 reject(conn_err);
