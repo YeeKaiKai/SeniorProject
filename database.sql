@@ -60,12 +60,11 @@ CREATE TABLE CUSTOMIZE
 
 CREATE TABLE CUSTOMER
 (
-  CustomerName VARCHAR(20) NOT NULL,
-  ForHere BOOLEAN NOT NULL,
-  CustomerID INT NOT NULL AUTO_INCREMENT,
+  ForHere BOOLEAN NULL,
+  CustomerID INT NOT NULL,
   TableNumber CHAR(3) NULL,
-  RestaurantName VARCHAR(30) NOT NULL,
-  PRIMARY KEY (CustomerID, RestaurantName),
+  RestaurantName VARCHAR(30) NULL,
+  PRIMARY KEY (CustomerID),
   FOREIGN KEY (TableNumber, RestaurantName) REFERENCES `TABLE`(TableNumber, RestaurantName)
 );
 
@@ -74,9 +73,17 @@ CREATE TABLE DIALOGUE
   Content VARCHAR(200) NOT NULL,
   DialogueID INT NOT NULL AUTO_INCREMENT,
   CustomerID INT NOT NULL,
+  PRIMARY KEY (DialogueID, CustomerID),
+  FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID)
+);
+
+CREATE TABLE `ORDER`
+(
+  OrderID INT NOT NULL,
+  TotalSum INT NOT NULL,
   RestaurantName VARCHAR(30) NOT NULL,
-  PRIMARY KEY (DialogueID, CustomerID, RestaurantName),
-  FOREIGN KEY (CustomerID, RestaurantName) REFERENCES CUSTOMER(CustomerID, RestaurantName)
+  PRIMARY KEY (OrderID, RestaurantName),
+  FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
 );
 
 CREATE TABLE CART
@@ -88,20 +95,11 @@ CREATE TABLE CART
   RestaurantName VARCHAR(30) NOT NULL,
   Note VARCHAR(100) NULL,
   Confirmed BOOLEAN NOT NULL DEFAULT FALSE,
+  OrderID INT NULL,
   PRIMARY KEY (CustomerID, Food, CustomID, RestaurantName),
-  FOREIGN KEY (CustomerID, RestaurantName) REFERENCES CUSTOMER(CustomerID, RestaurantName),
-  FOREIGN KEY (Food, RestaurantName) REFERENCES MENU(Food, RestaurantName)
-);
-
-CREATE TABLE `ORDER`
-(
-  CustomerID INT NOT NULL,
-  Food VARCHAR(30) NOT NULL,
-  CustomID INT NOT NULL,
-  RestaurantName VARCHAR(30) NOT NULL,
-  TotalSum INT NOT NULL,
-  PRIMARY KEY (CustomerID, Food, CustomID, RestaurantName),
-  FOREIGN KEY (CustomerID, Food, CustomID, RestaurantName) REFERENCES CART(CustomerID, Food, CustomID, RestaurantName)
+  FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID),
+  FOREIGN KEY (Food, RestaurantName) REFERENCES MENU(Food, RestaurantName),
+  FOREIGN KEY (OrderID, RestaurantName) REFERENCES `ORDER`(OrderID, RestaurantName)
 );
 
 CREATE TABLE CART_CUSTOMIZE
