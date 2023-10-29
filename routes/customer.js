@@ -13,13 +13,12 @@ router.get('/', function(req, res, next) {
 router.post('/chat', chatgpt.postDiagolue);
 router.get('/chat/:customerID', chatgpt.getDialogue);
 
-router.get('/cart', cart.getCart);
-router.post('/cart', cart.postCart);
-router.delete('/cart', cart.deleteCart);
-router.patch('/cart', cart.patchCart);
+router.get('/:restaurantName/cart', cart.getCart);
+router.post('/:restaurantName/cart', cart.postCart);
+router.delete('/:restaurantName/cart', cart.deleteCart);
+router.patch('/:restaurantName/cart', cart.patchCart);
 
-router.post('/:restaurantName/cart/customize', custom.postOrderCustomOption);
-router.get('/:restaurantName/cart/customize', custom.getCustomizeOption);
+router.get('/:restaurantName/:food/customize', custom.getCustomizeOption);
 
 
 
