@@ -7,12 +7,8 @@ module.exports = async function (restaurantName, customerID) {
         `
         SELECT * 
         FROM CART AS C
-        RIGHT JOIN CART_CUSTOMIZE AS CC
-        ON C.CustomerID = CC.CustomerID
-            AND C.Food = CC.Food
-            AND C.CustomID = CC.CustomID
-            AND C.RestaurantName = CC.RestaurantName
-        WHERE Confirmed = FALSE AND RestaurantName = ? AND CustomerID = ?
+        NATURAL JOIN CART_CUSTOMIZE AS CC
+        WHERE Confirmed = FALSE AND CC.RestaurantName = ? AND CC.CustomerID = ?
         `;
         const pool = getPool();
         pool.getConnection((conn_err, connection) => {
