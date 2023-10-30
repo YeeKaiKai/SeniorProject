@@ -7,7 +7,7 @@ const getPool = require('../connectionDB.js');
  * @param {*} maxOption
  * @param {String} restaurantName
  */
-module.exports = async function (custom, option, price, restaurantName) {
+module.exports = async function (custom, option, optionPrice, restaurantName) {
 
     return new Promise((resolve, reject) => {
         const pool = getPool();
@@ -20,8 +20,8 @@ module.exports = async function (custom, option, price, restaurantName) {
             for (let num = 0; num < option.length; num++) {
                 let sql = 
                 `
-                INSERT INTO CUSTOM_OPTION(Custom, \`Option\`, Price, RestaurantName)
-                VALUES("${custom}", "${option[num]}", "${price[num]}", "${restaurantName}");
+                INSERT INTO CUSTOM_OPTION(Custom, \`Option\`, OptionPrice, RestaurantName)
+                VALUES("${custom}", "${option[num]}", "${optionPrice[num]}", "${restaurantName}");
                 `;
                 connection.query(sql, (query_err, results) => {
                     if (query_err) {

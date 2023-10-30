@@ -8,7 +8,7 @@ const getPool = require('../connectionDB.js');
  * @param {*} restaurantName
  */
 
-module.exports = async function (custom, oldOption, newOption, price, restaurantName) {
+module.exports = async function (custom, oldOption, newOption, optionPrice, restaurantName) {
 
     return new Promise((resolve, reject) => {
         let result;
@@ -23,7 +23,7 @@ module.exports = async function (custom, oldOption, newOption, price, restaurant
                 `
                 UPDATE CUSTOM_OPTION
                 SET \`Option\` = "${newOption[num]}",
-                Price = "${price[num]}"
+                OptionPrice = "${optionPrice[num]}"
                 WHERE Custom = "${custom}" 
                 AND \`Option\` = "${oldOption[num]}"
                 AND RestaurantName = "${restaurantName}";

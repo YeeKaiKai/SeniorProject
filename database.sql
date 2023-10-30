@@ -42,7 +42,7 @@ CREATE TABLE CUSTOM_OPTION
   `Option` VARCHAR(20) NOT NULL,
   Custom VARCHAR(20) NOT NULL,
   RestaurantName VARCHAR(30) NOT NULL,
-  Price INT NULL,
+  OptionPrice INT NULL,
   PRIMARY KEY (`Option`, Custom, RestaurantName),
   FOREIGN KEY (Custom, RestaurantName) REFERENCES FOOD_CUSTOM(Custom, RestaurantName)
   ON DELETE CASCADE ON UPDATE CASCADE
