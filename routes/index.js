@@ -7,6 +7,7 @@ const menu = require('../controller/menu.js');
 /* GET home page. */
 router.get('/', index.getCustomerID)
 
+router.get('/restaurant', index.getRestaurant)
 router.get('/:restaurantName/menu', menu.getMenu);
 router.get('/:restaurantName/category', menu.getCategory);
 

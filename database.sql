@@ -1,6 +1,7 @@
 CREATE TABLE RESTAURANT
 (
   RestaurantName VARCHAR(30) NOT NULL,
+  RestaurantName_zh_tw VARCHAR(50) NOT NULL,
   Address VARCHAR(60) NOT NULL,
   PRIMARY KEY (RestaurantName)
 );
