@@ -135,8 +135,10 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                             // 找到對應的custom之option
                             let existOption = customization.map(obj => obj.option);
                             // 確認資料庫之option是否等同於傳入之option
-                            let allOptionExist = existOption.every(op => option[cIndex].includes(op));
-                            if (!allOptionExist) {
+                            let allOptionInParams = existOption.every(op => option[cIndex].includes(op));
+                            // 確認傳入之option是否等同於資料庫之option
+                            let allOptionINDB = option[cIndex].every(op => existOption.includes(op));
+                            if (!allOptionInParams || !allOptionINDB) {
                                 // 有option不相同即為不符合
                                 haveSameCustomize = false;
                             }
