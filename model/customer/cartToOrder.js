@@ -7,7 +7,7 @@ const getPool = require('../connectionDB.js');
  * @param {*} restaurantName
  */
 
-module.exports = async function (customerID, totalSum, restaurantName, orderDate, orderTime) {
+module.exports = async function (customerID, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber) {
     
     let sql =
     `
@@ -36,14 +36,14 @@ module.exports = async function (customerID, totalSum, restaurantName, orderDate
                 }
                 let insertSql =
                 `
-                INSERT INTO \`ORDER\`(OrderID, TotalSum, RestaurantName, OrderDate, OrderTime)
+                INSERT INTO \`ORDER\`(OrderID, TotalSum, RestaurantName, OrderDate, OrderTime, ForHere, TableNumber, PhoneNumber)
                 SELECT (SELECT 
                     IFNULL(MAX(OrderID), 0) + 1 
                     FROM \`ORDER\` 
                     WHERE RestaurantName = ?), 
-                ?, ?, ?, ?
+                ?, ?, ?, ?, ?, ?, ?
                 `;
-                connection.query(insertSql, [restaurantName, totalSum, restaurantName, orderDate, orderTime], (query_err, results) => {
+                connection.query(insertSql, [restaurantName, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber], (query_err, results) => {
                     if (query_err) {
                         connection.rollback(() => {
                             connection.release();

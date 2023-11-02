@@ -85,6 +85,10 @@ CREATE TABLE `ORDER`
   RestaurantName VARCHAR(30) NOT NULL,
   OrderDate VARCHAR(20) NOT NULL,
   OrderTime VARCHAR(20) NOT NULL,
+  ForHere BOOLEAN NOT NULL,
+  TableNumber CHAR(3) NULL,
+  PhoneNumber CHAR(10) NULL,
+  Paid BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (OrderID, RestaurantName),
   FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
 );
