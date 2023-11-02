@@ -3,8 +3,6 @@ const getPool = require('../connectionDB.js');
 /**
  *
  * @param {String} custom 
- * @param {Object[]} option 
- * @param {Object[]} price
  * @param {String} restaurantName
  */
 module.exports = async function (custom, restaurantName) {
