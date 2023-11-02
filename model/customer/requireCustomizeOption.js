@@ -7,9 +7,8 @@ module.exports = async function (restaurantName, food) {
         `
         SELECT *
         FROM CUSTOMIZE as C
-        INNER JOIN CUSTOM_OPTION AS CO
-        ON C.RestaurantName = CO.RestaurantName
-        AND C.Custom = CO.Custom
+        NATURAL JOIN CUSTOM_OPTION AS CO
+        NATURAL JOIN FOOD_CUSTOM AS FC
         WHERE C.RestaurantName = ?
         AND C.Food = ?
         `;
