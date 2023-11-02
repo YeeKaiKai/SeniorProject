@@ -7,195 +7,274 @@ const getPool = require('../connectionDB.js');
  * @param {*} option 
  * @param {*} note
  * @param {*} food
- * @param {*} customID
  * @param {*} customerID
  * @param {*} restaurantName
  */
 
-module.exports = async function (amount, custom, option, note, food, customID, customerID, restaurantName) {
-
+async function getConnection(pool) {
     return new Promise((resolve, reject) => {
-        const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
-                reject(conn_err);
-                return;
+                return reject(conn_err);
             }
-            connection.beginTransaction((tran_err) => {
-                if (tran_err) {
-                    if (connection) {
-                        connection.rollback(() => {
-                            connection.release();
-                            reject(tran_err);
-                        })
-                        return;
-                    }
-                } else {
-                    // 檢查是否存在同樣客製化購物車之食物
-                    let cartSql = `
-                    SELECT COUNT(*) AS count
-                    FROM CART
-                    WHERE Food = ?
-                    AND CustomerID = ?
-                    AND RestaurantName = ?`;
-                    connection.query(cartSql, [food, customerID, restaurantName], (query_err, results) => {
-                        if (query_err) {
-                            connection.rollback(() => {
-                                connection.release();
-                                reject(query_err);
-                            });
-                            return;
-                        }
-                        // 有幾筆同樣食物之購物車要檢查
-                        let promises = [];
-                        let countSql = `SELECT COUNT(DISTINCT CustomID) as customIDLength 
-                        FROM \`CART_CUSTOMIZE\` 
-                        WHERE CustomerID = ? 
-                        AND Food = ? 
-                        AND RestaurantName = ?`
-                        connection.query(countSql, [customerID, food, restaurantName], (query_err, results) => {
-                            if (query_err) {
-                                connection.rollback(() => {
-                                    connection.release();
-                                    reject(query_err);
-                                })
-                                return;
-                            }
-                            let customIDLength = results[0].customIDLength;
-                            if (customIDLength == 0) {
-                                // 代表未點過此食物
-                                promises.push(new Promise((resolve, reject) => {
-                                    resolve({
-                                        count: 0
-                                    });
-                                }))
-                            }
-                            // 該食物是否存在相同之客製化
-                            let checkSql = `SELECT COUNT(*) as count 
-                            FROM CART_CUSTOMIZE 
-                            WHERE CustomID = ? 
-                            AND Food = ? 
-                            AND CustomerID = ? 
-                            AND Custom = ? 
-                            AND \`Option\` = ? 
-                            AND RestaurantName = ?`
-                            for (let index0 = 1; index0 <= customIDLength; index0++) {
-                                for (let index1 = 0; index1 < custom.length; index1++) {
-                                    for (let index2 = 0; index2 < option[index1].length; index2++) {
-                                        promises.push(new Promise((resolve, reject) => {
-                                            connection.query(checkSql, [index0, food, customerID, custom[index1], option[index1][index2], restaurantName], (query_err, results) => {
-                                                if (query_err) {
-                                                    reject(query_err);
-                                                } else {
-                                                    resolve(results[0].count);
-                                                }
-                                            });
-                                        }))
-                                    }
-                                } 
-                            }
-                            Promise.all(promises).then((counts) => {
-                                // 該食物已存在所有客製化組合重複
-                                if (counts.every(count => count > 0 )) {
-                                    let updateSql = `UPDATE \`CART\` 
-                                    SET Amount = 
-                                    (SELECT Amount 
-                                        FROM \`CART\` 
-                                        WHERE CustomID = ? 
-                                        AND Food = ? 
-                                        AND CustomerID = ? 
-                                        AND RestaurantName = ?) 
-                                        + ? 
-                                        WHERE CustomID = ? 
-                                        AND Food = ?
-                                        AND CustomerID = ? 
-                                        AND RestaurantName = ?`
-                                        connection.query(updateSql, [customID, food, customerID, restaurantName, amount, customID, food, customerID, restaurantName], (query_err, results) => {
-                                            if (query_err) {
-                                            connection.rollback(() => {
-                                                console.log(query_err);
-                                                reject(query_err);
-                                            })
-                                        } else {
-                                            connection.commit(commit_err => {
-                                                if (commit_err) {
-                                                    connection.rollback(() => {
-                                                        reject(commit_err);
-                                                    })
-                                                } else {
-                                                    resolve(results);
-                                                }
-                                            })
-                                        }
-                                    })
-                                } else {
-                                    // 該客製化食物訂單不存在
-                                    // 先新增至購物車
-                                    let orderSql = `
-                                    INSERT INTO CART(CustomID, Amount, Note, Food, CustomerID, restaurantName)
-                                    SELECT
-                                        (SELECT IFNULL(MAX(CustomID), 0) + 1
-                                        FROM CART 
-                                        WHERE FOOD = ?
-                                        AND CustomerID = ?
-                                        AND restaurantName = ?
-                                        UNION
-                                        SELECT 0
-                                        LIMIT 1),
-                                    ?, ?, ?, ?, ?`;
-                                    connection.query(orderSql, [food, customerID, restaurantName, amount, note, food, customerID, restaurantName], (query_err, results) => {
-                                        if (query_err) {
-                                            connection.rollback(() => {
-                                                reject(query_err);
-                                            }) 
-                                        }
-                                        // 新增至客製化
-                                        let insertSql = `INSERT INTO CART_CUSTOMIZE(customerID, food, customID, option, custom, RestaurantName) 
-                                        VALUES (?, ?, ?, ?, ?, ?)`
-                                        let _promises = [];
-                                        for(let index1 = 0; index1 < custom.length; index1++) {
-                                            for(let index2 = 0; index2 < option[index1].length; index2++) {
-                                                _promises.push(new Promise((resolve, reject) => {
-                                                    connection.query(insertSql, [customerID, food, customID, option[index1][index2], custom[index1], restaurantName], (query_err, results) => {
-                                                        if (query_err) {
-                                                            reject(query_err);
-                                                        } else {
-                                                            resolve(results);
-                                                        }
-                                                    })
-                                                }))
-                                            }
-                                        }
-                                        Promise.all(_promises).then(() => {
-                                            connection.commit(commit_err => {
-                                                if (commit_err) {
-                                                    connection.rollback(() => {
-                                                        reject(commit_err);
-                                                    })
-                                                } else {
-                                                    resolve("Success");
-                                                }
-                                            })
-                                        }).catch(() => {
-                                            connection.rollback(() => {
-                                                reject(new Error(500));
-                                            })
-                                        })
-                                    })
-                                }
-                            }).catch(() => {
-                                connection.rollback(() => {
-                                    reject(new Error(500));
-                                })
-                            }).finally(() => {
-                                if (connection) {
-                                    connection.release();
-                                }
-                            })
-                        })
-                    })
-                }
-            })
+            resolve(connection);
+        });
+    });
+}
+
+async function beginTransaction(connection) {
+    return new Promise((resolve, reject) => {
+        connection.beginTransaction((tran_err) => {
+            if (tran_err) {
+                return reject(tran_err);
+            }
+            resolve();
+        });
+    });
+}
+
+async function queryAsync(connection, sql, params) {
+    return new Promise((resolve, reject) => {
+        connection.query(sql, params, (query_err, results) => {
+            if (query_err) {
+                return reject(query_err);
+            }
+            resolve(results);
+        });
+    });
+}
+
+async function rollback(connection) {
+    return new Promise((resolve, reject) => {
+        connection.rollback();
+        resolve();
+    })
+}
+
+async function commit(connection) {
+    return new Promise((resolve, reject) => {
+        connection.commit((commit_err) => {
+            if (commit_err) {
+                return reject(commit_err);
+            }
+            resolve();
         })
     })
+}
+
+module.exports = async function (amount, custom, option, note, food, customerID, restaurantName) {
+    
+    const pool = getPool();
+    const connection = await getConnection(pool);
+
+    try {
+
+        await beginTransaction(connection);
+        
+        // 此商品是否擁有客製化
+        let customizeSql = 
+        `
+        SELECT COUNT(*) as count
+        FROM CUSTOMIZE
+        WHERE RestaurantName = ?
+        AND Food = ?
+        `;
+        let ifCustomize = await queryAsync (connection, customizeSql, [restaurantName, food]);
+
+        // 此商品是否已存在購物車
+        let checkSql = 
+        `
+        SELECT COUNT(*) as count, customID
+        FROM CART
+        WHERE RestaurantName = ?
+        AND Food = ?
+        AND CustomerID = ?
+        `;
+        let ifOrdered = await queryAsync(connection, checkSql, [restaurantName, food, customerID]);
+
+        if (ifCustomize[0].count > 0) {
+            // 此商品存在客製化
+            
+            if (ifOrdered[0].count > 0) {
+                // 此商品存在購物車
+                
+                // 檢查是否存在著客製化相同
+                // 需要檢查幾筆
+                let customIDSql = 
+                `
+                SELECT COUNT(DISTINCT CustomID) as count 
+                FROM CART_CUSTOMIZE 
+                WHERE Food = ? 
+                AND CustomerID = ? 
+                AND RestaurantName = ?
+                `
+                let customIDCount = await queryAsync(connection, customIDSql, [food, customerID, restaurantName]);
+                // 存在同樣客製化之CustomID
+                let sameOptionCustomID = null;
+                for (let num = 1; num <= customIDCount[0].count; num++) {
+                    let haveSameCustomize = true; 
+                    // 第 num 筆的 custom 和 option
+                    let customizationSql = 
+                    `
+                    SELECT custom, option
+                    FROM CART_CUSTOMIZE
+                    WHERE Food = ?
+                    AND CustomerID = ?
+                    AND RestaurantName = ?
+                    AND CustomID = ?
+                    `
+                    let customization = await queryAsync(connection, customizationSql, [food, customerID, restaurantName, num]);
+                    for (let customIndex = 0; customIndex < customization.length; customIndex++) {
+
+                        // 資料庫的custom在傳入的custom的第幾筆
+                        let cIndex = custom.indexOf(customization[customIndex].custom);
+                        // 該custom有幾組option
+                        let countOption = customization.filter(obj => obj.custom === customization[customIndex].custom).length;
+                        for (let optionIndex = 0; optionIndex < countOption; optionIndex++) {
+                            
+                            // 找到對應的custom之option
+                            let existOption = customization.map(obj => obj.option);
+                            // 確認資料庫之option是否等同於傳入之option
+                            let allOptionExist = existOption.every(op => option[cIndex].includes(op));
+                            if (!allOptionExist) {
+                                // 有option不相同即為不符合
+                                haveSameCustomize = false;
+                            }
+                        }
+                    }
+                    if (haveSameCustomize == true) {
+                        // 符合即找到
+
+                        sameOptionCustomID = num;
+                        break;
+                    }
+                }
+
+                if (sameOptionCustomID != null) {
+                    // 購物車存在同樣客製化
+
+                    // 更新該購物車數量
+                    let updateSql = 
+                    `
+                    UPDATE \`CART\` 
+                    SET Amount = 
+                    (   SELECT Amount 
+                        FROM \`CART\` 
+                        WHERE CustomID = ? 
+                        AND Food = ? 
+                        AND CustomerID = ? 
+                        AND RestaurantName = ?
+                    ) + ? 
+                    WHERE CustomID = ? 
+                    AND Food = ?
+                    AND CustomerID = ? 
+                    AND RestaurantName = ?
+                    `
+                    await queryAsync(connection, updateSql, [sameOptionCustomID, food, customerID, restaurantName, amount, sameOptionCustomID, food, customerID, restaurantName]);
+                } else {
+                    // 購物車不存在同樣客製化
+
+                    // 插入購物車
+                    let insertCartSql = 
+                    `
+                    INSERT INTO CART(CustomID, Amount, Note, Food, CustomerID, restaurantName)
+                    SELECT
+                        (SELECT IFNULL(MAX(CustomID), 0) + 1
+                        FROM CART 
+                        WHERE Food = ?
+                        AND CustomerID = ?
+                        AND restaurantName = ?),
+                    ?, ?, ?, ?, ?`;
+                    await queryAsync(connection, insertCartSql, [food, customerID, restaurantName, amount, note, food, customerID, restaurantName]);
+                    let insertCustomSql = 
+                    `
+                    INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Option, Custom, RestaurantName) 
+                    SELECT (SELECT MAX(CustomID)
+                        FROM CART 
+                        WHERE Food = ?
+                        AND CustomerID = ?
+                        AND restaurantName = ?),
+                    ?, ?, ?, ?, ?
+                    `;
+                    for (let customIndex = 0; customIndex < custom.length; customIndex++) {
+                        for (let optionIndex = 0; optionIndex < option.length; optionIndex++) {
+                            await queryAsync(connection, insertCustomSql, [food, customerID, restaurantName, customerID, food, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                        }
+                    }
+                }
+            } else {
+                // 此商品不存在購物車
+                let insertCartSql = 
+                `
+                INSERT INTO CART(CustomID, Amount, Note, Food, CustomerID, restaurantName)
+                SELECT
+                    (SELECT IFNULL(MAX(CustomID), 0) + 1
+                    FROM CART 
+                    WHERE Food = ?
+                    AND CustomerID = ?
+                    AND restaurantName = ?),
+                ?, ?, ?, ?, ?`;
+                await queryAsync(connection, insertCartSql, [food, customerID, restaurantName, amount, note, food, customerID, restaurantName]);
+                let insertCustomSql = 
+                `
+                INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Option, Custom, RestaurantName) 
+                SELECT (SELECT MAX(CustomID)
+                    FROM CART 
+                    WHERE Food = ?
+                    AND CustomerID = ?
+                    AND restaurantName = ?),
+                ?, ?, ?, ?, ?
+                `;
+                for (let customIndex = 0; customIndex < custom.length; customIndex++) {
+                    for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
+                        await queryAsync(connection, insertCustomSql, [food, customerID, restaurantName, customerID, food, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                    }
+                }
+            }
+
+        } else {
+            // 此商品不存在客製化
+
+            if (ifOrdered[0].count > 0) {
+                // 此商品已在購物車
+                // 更新數量
+                let updateSql = 
+                `
+                UPDATE \`CART\` 
+                SET Amount = 
+                (   SELECT Amount 
+                    FROM \`CART\` 
+                    WHERE CustomID = 1 
+                    AND Food = ? 
+                    AND CustomerID = ? 
+                    AND RestaurantName = ?
+                ) + ? 
+                WHERE CustomID = 1 
+                AND Food = ?
+                AND CustomerID = ? 
+                AND RestaurantName = ?
+                `
+                await queryAsync(connection, updateSql, [food, customerID, restaurantName, food, customerID, restaurantName]);
+            } else {
+                // 此商品不存在購物車
+                // 新增至購物車
+                let insertSql = 
+                `
+                INSERT INTO CART(CustomID, Amount, Note, Food, CustomerID, restaurantName)
+                VALUES(1, ?, ?, ?, ?, ?)
+                `;
+                await queryAsync(connection, insertSql, [amount, note, food, customerID, restaurantName]);
+            }
+        }
+
+        await commit(connection);
+        connection.release();
+        resolve("Success");
+    } catch (error) {
+        await rollback(connection);
+        connection.release();
+        throw error;
+
+    }
+
 }
