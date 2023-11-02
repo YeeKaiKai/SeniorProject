@@ -9,8 +9,8 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.get('/order', order.getOrder);
-router.delete('/order', order.deleteOrder);
+router.get('/:restaurantName/order', order.getOrder);
+router.delete('/:restaurantName/order', order.deleteOrder);
 
 router.post('/:restaurantName/custom', custom.postCustom);
 router.post('/:restaurantName/custom/option', custom.postOption);
