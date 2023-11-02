@@ -9,14 +9,6 @@ const getPool = require('../connectionDB.js');
 
 module.exports = async function (customerID, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber) {
     
-    let sql =
-    `
-    UPDATE \`CART\` 
-    SET Confirmed = TRUE,
-    OrderID = ?
-    WHERE CustomerID = ? 
-    AND RestaurantName = ?
-    `;
     return new Promise((resolve, reject) => {
         
         const pool = getPool();
@@ -54,9 +46,10 @@ module.exports = async function (customerID, totalSum, restaurantName, orderDate
                     let updateSql = 
                     `
                     UPDATE \`CART\`
-                    SET OrderID = (SELECT MAX(OrderID) FROM \`ORDER\`)
+                    SET OrderID = (SELECT MAX(OrderID) FROM \`ORDER\`), Confirmed = TRUE
                     WHERE CustomerID = ?
                     AND RestaurantName = ?
+                    AND ISNULL(OrderID)
                     `;
                     connection.query(updateSql, [customerID, restaurantName], (query_err, results) => {
                         if (query_err) {
