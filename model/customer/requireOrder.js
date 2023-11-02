@@ -5,12 +5,16 @@ module.exports = async function (restaurantName, customerID) {
     return new Promise((resolve, reject) => {
         let sql = 
         `
-        SELECT * 
-        FROM CART AS C
-        LEFT JOIN CART_CUSTOMIZE AS CC
-        ON C.RestaurantName = CC.RestaurantName AND C.CustomerID = CC.CustomerID
-        NATURAL JOIN \`ORDER\`
-        WHERE Confirmed = TRUE AND C.RestaurantName = ? AND C.CustomerID = ?
+        SELECT *
+        FROM CART c
+        LEFT JOIN CART_CUSTOMIZE cc 
+        ON c.CustomerID = cc.CustomerID 
+        AND c.Food = cc.Food 
+        AND c.CustomID = cc.CustomID 
+        AND c.RestaurantName = cc.RestaurantName
+        INNER JOIN \`ORDER\` o 
+        ON c.OrderID = o.OrderID 
+        WHERE c.RestaurantName = ? AND c.CustomerID = ?
         `;
         const pool = getPool();
         pool.getConnection((conn_err, connection) => {
