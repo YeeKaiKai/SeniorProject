@@ -9,8 +9,10 @@ exports.postCartToOrder = async function(req, res, next) {
         let customerID = req.body.customerID;
         let restaurantName = req.params.restaurantName;
         let totalSum = req.body.totalSum;
+        let orderDate = req.body.orderDate;
+        let orderTime = req.body.orderTime;
 
-        let results = await cartToOrder(customerID, totalSum, restaurantName);
+        let results = await cartToOrder(customerID, totalSum, restaurantName, orderDate, orderTime);
         res.send(results);
     } catch (error) {
         res.send(error);

@@ -83,6 +83,8 @@ CREATE TABLE `ORDER`
   OrderID INT NOT NULL,
   TotalSum INT NOT NULL,
   RestaurantName VARCHAR(30) NOT NULL,
+  OrderDate VARCHAR(20) NOT NULL,
+  OrderTime VARCHAR(20) NOT NULL,
   PRIMARY KEY (OrderID, RestaurantName),
   FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
 );
