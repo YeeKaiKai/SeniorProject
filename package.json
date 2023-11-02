@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "nodemon test.js"
+    "test": "nodemon test.js",
+    "non-stop": "forever ./bin/www"
   },
   "dependencies": {
     "chatgpt": "^5.2.5",
