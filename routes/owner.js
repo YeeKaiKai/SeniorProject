@@ -12,16 +12,16 @@ router.get('/', function(req, res, next) {
 router.get('/order', order.getOrder);
 router.delete('/order', order.deleteOrder);
 
-router.post('/custom', custom.postCustom);
-router.post('/custom/option', custom.postOption);
+router.post('/:restaurantName/custom', custom.postCustom);
+router.post('/:restaurantName/custom/option', custom.postOption);
 
-router.delete('/custom', custom.deleteCustom);
-router.delete('/custom/option', custom.deleteOption);
+router.delete('/:restaurantName/custom', custom.deleteCustom);
+router.delete('/:restaurantName/custom/option', custom.deleteOption);
 
-router.get('/custom', custom.getCustom);
-router.get('/custom/option', custom.getOption);
+router.get('/:restaurantName/custom', custom.getCustom);
+router.get('/:restaurantName/custom/option', custom.getOption);
 
-router.put('/custom', custom.putCustom);
-router.put('/custom/option', custom.putOption);
+router.put('/:restaurantName/custom', custom.putCustom);
+router.put('/:restaurantName/custom/option', custom.putOption);
 
 module.exports = router;
