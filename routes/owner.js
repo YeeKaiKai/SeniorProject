@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const order = require('../controller/order.js')
+const order = require('../controller/owner/order.js')
 const custom = require('../controller/owner/custom.js');
 
 /* GET users listing. */
