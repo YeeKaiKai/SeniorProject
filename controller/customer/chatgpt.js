@@ -69,9 +69,9 @@ function extractFoods(str) {
  */
 exports.postDiagolue = async function(req, res, next) {
 
-    let customerID = 1;
+    let customerID = req.body.customerID;
     let text = req.body.text;
-    let restaurantName = "webSocket";
+    let restaurantName = req.params.restaurantName;
 
     // 引入 ChatGPT
     const importDynamic = new Function( 'modulePath', 'return import(modulePath)', );
@@ -84,7 +84,7 @@ exports.postDiagolue = async function(req, res, next) {
     });
     
     let command; // 給予 ChatGPT 的指令
-    fs.readFile(path.join(__dirname, '../command.txt'), (error, data) => {
+    fs.readFile(path.join(__dirname, '../../command.txt'), (error, data) => {
         if (error) {
             console.log(error);
         } else {
@@ -150,8 +150,8 @@ exports.postDiagolue = async function(req, res, next) {
 
 exports.getDialogue = async function (req, res, next) {
 
-    let customerID = req.params.customerID;
-    let restaurantName = "webSocket";
+    let customerID = req.query.customerID;
+    let restaurantName = req.params.restaurantName;
 
     let dialogue = await requireDialogue(customerID, restaurantName);
 
