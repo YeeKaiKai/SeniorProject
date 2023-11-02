@@ -12,7 +12,7 @@ exports.postCustom = async function(req, res, next) {
     let custom = req.body.custom;
     let minOption = req.body.minOption;
     let maxOption = req.body.maxOption;
-    let restaurantName = req.body.restaurantName;
+    let restaurantName = req.params.restaurantName;
 
     try {
         let result = await createCustom(custom, minOption, maxOption, restaurantName);
@@ -28,7 +28,7 @@ exports.postOption = async function(req, res, next) {
     let custom = req.body.custom;
     let option = req.body.option;
     let price = req.body.price;
-    let restaurantName = req.body.restaurantName;
+    let restaurantName = req.params.restaurantName;
 
     try {
         let result = await createOption(custom, option, price, restaurantName);
@@ -42,7 +42,7 @@ exports.postOption = async function(req, res, next) {
 exports.deleteCustom = async function(req, res, next) {
 
     let custom = req.body.custom;
-    let restaurantName = req.body.restaurantName;
+    let restaurantName = req.params.restaurantName;
 
     try {
         let result = await deleteCustom(custom, restaurantName);
@@ -57,7 +57,7 @@ exports.deleteOption = async function(req, res, next) {
 
     let custom = req.body.custom;
     let option = req.body.option;
-    let restaurantName = req.body.restaurantName;
+    let restaurantName = req.params.restaurantName;
 
     try {
         let result = await deleteOption(custom, option, restaurantName);
@@ -70,7 +70,7 @@ exports.deleteOption = async function(req, res, next) {
 
 exports.getCustom = async function(req, res, next) {
 
-    let restaurantName = req.body.restaurantName;
+    let restaurantName = req.params.restaurantName;
 
     try {
         let result = await requireCustom(restaurantName);
@@ -84,8 +84,8 @@ exports.getCustom = async function(req, res, next) {
 
 exports.getOption = async function(req, res, next) {
 
-    let custom = req.body.custom;
-    let restaurantName = req.body.restaurantName;
+    let custom = req.query.custom;
+    let restaurantName = req.params.restaurantName;
 
     try {
         let result = await requireOption(custom, restaurantName);
@@ -102,7 +102,7 @@ exports.putCustom = async function(req, res, next) {
     let newCustom = req.body.newCustom;
     let minOption = req.body.minOption;
     let maxOption = req.body.maxOption;
-    let restaurantName = req.body.restaurantName;
+    let restaurantName = req.params.restaurantName;
 
     try {
         let result = await updateCustom(oldCustom, newCustom, minOption, maxOption, restaurantName);
@@ -118,7 +118,7 @@ exports.putOption = async function(req, res, next) {
     let oldOption = req.body.oldOption;
     let newOption = req.body.newOption;
     let price = req.body.price;
-    let restaurantName = req.body.restaurantName;
+    let restaurantName = req.params.restaurantName;
     
     try {
         let result = await updateOption(custom, oldOption, newOption, price, restaurantName);
