@@ -7,14 +7,14 @@ module.exports = async function (restaurantName) {
         `
         SELECT * 
         FROM \`ORDER\`
-        WHERE restaurantName = ${restaurantName}
+        WHERE restaurantName = ?
         `;
         const pool = getPool();
         pool.getConnection((conn_err, connection) => {
             if (conn_err) {
                 reject(conn_err);
             } 
-            connection.query(sql, (query_err, results) => {
+            connection.query(sql, [restaurantName], (query_err, results) => {
                 if (query_err) {
                     reject(query_err);
                 }
