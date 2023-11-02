@@ -197,7 +197,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                     ?, ?, ?, ?, ?
                     `;
                     for (let customIndex = 0; customIndex < custom.length; customIndex++) {
-                        for (let optionIndex = 0; optionIndex < option.length; optionIndex++) {
+                        for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
                             await queryAsync(connection, insertCustomSql, [food, customerID, restaurantName, customerID, food, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
                         }
                     }
@@ -254,7 +254,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                 AND CustomerID = ? 
                 AND RestaurantName = ?
                 `
-                await queryAsync(connection, updateSql, [food, customerID, restaurantName, food, customerID, restaurantName]);
+                await queryAsync(connection, updateSql, [food, customerID, restaurantName, amount, food, customerID, restaurantName]);
             } else {
                 // 此商品不存在購物車
                 // 新增至購物車
@@ -269,8 +269,8 @@ module.exports = async function (amount, custom, option, note, food, customerID,
 
         await commit(connection);
         connection.release();
-        resolve("Success");
     } catch (error) {
+        console.log(error);
         await rollback(connection);
         connection.release();
         throw error;
