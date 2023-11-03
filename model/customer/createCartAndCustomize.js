@@ -89,6 +89,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
         WHERE RestaurantName = ?
         AND Food = ?
         AND CustomerID = ?
+        AND Confirmed = FALSE
         `;
         let ifOrdered = await queryAsync(connection, checkSql, [restaurantName, food, customerID]);
 
