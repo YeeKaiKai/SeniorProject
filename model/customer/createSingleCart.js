@@ -1,4 +1,5 @@
 const getPool = require('../connectionDB.js');
+const connectionTool = require('../connectionTool.js');
 
 /**
  * 新增顧客訂單，如果已經有了就會變修改數量。
@@ -11,28 +12,16 @@ const getPool = require('../connectionDB.js');
 
 module.exports = async function (customerID, quantity, food, note, restaurantName) {
 
-    return new Promise((resolve, reject) => {
-        const pool = getPool();
-        let sql =
-        `
-        INSERT INTO \`CART\`(CustomerID, CustomID, Food, Amount, Note, RestaurantName)
-        SELECT "${customerID}", (SELECT IFNULL(MAX(CustomID), 0) + 1 FROM CART WHERE CustomerID = "${customerID}" AND Food = "${food}" AND RestaurantName = "${restaurantName}"), "${food}", ${quantity}, "${note}", "${restaurantName}"
-        ON DUPLICATE KEY
-        UPDATE Amount = ${quantity}
-        `;
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                throw conn_err;
-            }
-            connection.query(sql, (query_err, results) => {
-                if (query_err) {
-                    throw query_err;
-                }
-                resolve(results);
-            })
-            if (connection) {
-                connection.release();
-            }
-        })
-    })
+    const pool = getPool();
+    let sql =
+    `
+    INSERT INTO \`CART\`(CustomerID, CustomID, Food, Amount, Note, RestaurantName)
+    SELECT ?, (SELECT IFNULL(MAX(CustomID), 0) + 1 FROM CART WHERE CustomerID = ? AND Food = ? AND RestaurantName = ?), ?, ?, ?, ?
+    ON DUPLICATE KEY
+    UPDATE Amount = ?
+    `;
+    const connection = await connectionTool.getConnection(pool);
+    await connectionTool.query(connection, sql, [customerID, customerID, food, restaurantName, food, quantity, note, restaurantName, quantity]);
+    connectionTool.release(connection);
+       
 }

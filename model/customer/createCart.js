@@ -1,4 +1,5 @@
 const getPool = require('../connectionDB.js');
+const connectionTool = require('../connectionTool.js');
 
 /**
  * 新增顧客訂單，如果已經有了就會變修改數量。
@@ -10,30 +11,22 @@ const getPool = require('../connectionDB.js');
 
 module.exports = async function (customerID, quantity, food, restaurantName) {
 
-    return new Promise((resolve, reject) => {
+    try {
         const pool = getPool();
+        let connection = await connectionTool.getConnection(pool);
         for (let num = 0; num < quantity.length; num++) {
             let sql =
             `
             INSERT INTO \`CART\`(CustomerID, Food, Amount, RestaurantName)
-            VALUES ("${customerID}", "${food[num]}", ${quantity[num]}, "${restaurantName}")
+            VALUES (?, ?, ?, ?)
             ON DUPLICATE KEY
-            UPDATE Amount = ${quantity[num]}
+            UPDATE Amount = ?
             `;
-            pool.getConnection((conn_err, connection) => {
-                if (conn_err) {
-                    throw conn_err;
-                }
-                connection.query(sql, (query_err, results) => {
-                    if (query_err) {
-                        throw query_err;
-                    }
-                    resolve(results);
-                })
-                if (connection) {
-                    connection.release();
-                }
-            })
+            await connectionTool.query(connection, sql, [customerID, food[num], quantity[num], restaurantName, quantity[num]]);
         }
-    })
+        connectionTool.release(connection);
+    } catch(error) {
+        connectionTool.release(connection);
+        throw error;
+    }
 }

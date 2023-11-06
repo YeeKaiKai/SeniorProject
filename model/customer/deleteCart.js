@@ -1,29 +1,17 @@
 const getPool = require('../connectionDB.js');
+const connectionTool = require('../connectionTool.js');
 
 module.exports = async function (customerID, food, restaurantName) {
 
-    return new Promise((resolve, reject) => {
-        for (let num = 0; num < food.length; num++) {
-            let sql = 
-            `
-            DELETE FROM \`CART\`
-            WHERE CustomerID = "${customerID}" AND Food = "${food[num]}" AND RestaurantName = "${restaurantName}" AND Confirmed = False;
-            `;
-            const pool = getPool();
-            pool.getConnection((conn_err, connection) => {
-                if (conn_err) {
-                    throw conn_err;
-                }
-                connection.query(sql, (query_err, results) => {
-                    if (query_err) {
-                        throw query_err;
-                    }
-                    resolve(results);
-                })
-                if (connection) {
-                    connection.release();
-                }
-            })
-        }
-    }) 
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
+    for (let num = 0; num < food.length; num++) {
+        let sql = 
+        `
+        DELETE FROM \`CART\`
+        WHERE CustomerID = ? AND Food = ? AND RestaurantName = ? AND Confirmed = False;
+        `;
+        await connectionTool.query(connection, sql, [customerID, food[num], restaurantName]);
+    }
+    connectionTool.release(connection);
 }
