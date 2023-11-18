@@ -5,13 +5,21 @@ module.exports = async function (customerID, food, restaurantName) {
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
-    for (let num = 0; num < food.length; num++) {
-        let sql = 
-        `
-        DELETE FROM \`CART\`
-        WHERE CustomerID = ? AND Food = ? AND RestaurantName = ? AND Confirmed = False;
-        `;
-        await connectionTool.query(connection, sql, [customerID, food[num], restaurantName]);
+    try {
+        await connectionTool.beginTransaction(connection);
+        for (let num = 0; num < food.length; num++) {
+            let sql = 
+            `
+            DELETE FROM \`CART\`
+            WHERE CustomerID = ? AND Food = ? AND RestaurantName = ? AND Confirmed = False;
+            `;
+            await connectionTool.query(connection, sql, [customerID, food[num], restaurantName]);
+        }
+        await connectionTool.commit(connection);
+        await connectionTool.release(connection);
+    } catch(error) {
+        await connectionTool.rollback(connection);
+        await connectionTool.release(connection);
+        throw error;
     }
-    connectionTool.release(connection);
 }

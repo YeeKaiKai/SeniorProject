@@ -10,6 +10,11 @@ module.exports = async function (customerID, dialogue, restaurantName) {
     `;
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
-    await connectionTool.query(connection, sql, [customerID, dialogue]);
-    connectionTool.release(connection);
+    try {
+        await connectionTool.query(connection, sql, [customerID, dialogue]);
+        await connectionTool.release(connection);
+    } catch(error) {
+        await connectionTool.release(connection);
+        throw error;
+    }
 }

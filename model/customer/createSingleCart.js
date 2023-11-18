@@ -13,6 +13,7 @@ const connectionTool = require('../connectionTool.js');
 module.exports = async function (customerID, quantity, food, note, restaurantName) {
 
     const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
     let sql =
     `
     INSERT INTO \`CART\`(CustomerID, CustomID, Food, Amount, Note, RestaurantName)
@@ -20,8 +21,11 @@ module.exports = async function (customerID, quantity, food, note, restaurantNam
     ON DUPLICATE KEY
     UPDATE Amount = ?
     `;
-    const connection = await connectionTool.getConnection(pool);
-    await connectionTool.query(connection, sql, [customerID, customerID, food, restaurantName, food, quantity, note, restaurantName, quantity]);
-    connectionTool.release(connection);
-       
+    try {
+        await connectionTool.query(connection, sql, [customerID, customerID, food, restaurantName, food, quantity, note, restaurantName, quantity]);
+        await connectionTool.release(connection);
+    } catch(error) {
+        await connectionTool.release(connection);
+        throw error;
+    }
 }

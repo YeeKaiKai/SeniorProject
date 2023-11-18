@@ -1,4 +1,5 @@
 const getPool = require('../connectionDB.js');
+const connectionTool = require('../connectionTool.js');
 
 /**
  * 加入食物至購物車，如果沒點過就直接新稱，若已經點過，先查詢該食物有沒有同樣的客製化，有的話更新訂單數量，沒有的話新增客製化
@@ -11,65 +12,14 @@ const getPool = require('../connectionDB.js');
  * @param {*} restaurantName
  */
 
-async function getConnection(pool) {
-    return new Promise((resolve, reject) => {
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                return reject(conn_err);
-            }
-            resolve(connection);
-        });
-    });
-}
-
-async function beginTransaction(connection) {
-    return new Promise((resolve, reject) => {
-        connection.beginTransaction((tran_err) => {
-            if (tran_err) {
-                return reject(tran_err);
-            }
-            resolve();
-        });
-    });
-}
-
-async function queryAsync(connection, sql, params) {
-    return new Promise((resolve, reject) => {
-        connection.query(sql, params, (query_err, results) => {
-            if (query_err) {
-                return reject(query_err);
-            }
-            resolve(results);
-        });
-    });
-}
-
-async function rollback(connection) {
-    return new Promise((resolve, reject) => {
-        connection.rollback();
-        resolve();
-    })
-}
-
-async function commit(connection) {
-    return new Promise((resolve, reject) => {
-        connection.commit((commit_err) => {
-            if (commit_err) {
-                return reject(commit_err);
-            }
-            resolve();
-        })
-    })
-}
-
 module.exports = async function (amount, custom, option, note, food, customerID, restaurantName) {
     
     const pool = getPool();
-    const connection = await getConnection(pool);
+    const connection = await connectionTool.getConnection(pool);
 
     try {
 
-        await beginTransaction(connection);
+        await connectionTool.beginTransaction(connection);
         
         // 此商品是否擁有客製化
         let customizeSql = 
@@ -79,7 +29,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
         WHERE RestaurantName = ?
         AND Food = ?
         `;
-        let ifCustomize = await queryAsync (connection, customizeSql, [restaurantName, food]);
+        let ifCustomize = await connectionTool.query(connection, customizeSql, [restaurantName, food]);
 
         // 此商品是否已存在購物車
         let checkSql = 
@@ -91,7 +41,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
         AND CustomerID = ?
         AND Confirmed = FALSE
         `;
-        let ifOrdered = await queryAsync(connection, checkSql, [restaurantName, food, customerID]);
+        let ifOrdered = await connectionTool.query(connection, checkSql, [restaurantName, food, customerID]);
 
         if (ifCustomize[0].count > 0) {
             // 此商品存在客製化
@@ -109,7 +59,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                 AND CustomerID = ? 
                 AND RestaurantName = ?
                 `
-                let customIDCount = await queryAsync(connection, customIDSql, [food, customerID, restaurantName]);
+                let customIDCount = await connectionTool.query(connection, customIDSql, [food, customerID, restaurantName]);
                 // 存在同樣客製化之CustomID
                 let sameOptionCustomID = null;
                 for (let num = 1; num <= customIDCount[0].count; num++) {
@@ -124,7 +74,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                     AND RestaurantName = ?
                     AND CustomID = ?
                     `
-                    let customization = await queryAsync(connection, customizationSql, [food, customerID, restaurantName, num]);
+                    let customization = await connectionTool.query(connection, customizationSql, [food, customerID, restaurantName, num]);
                     for (let customIndex = 0; customIndex < customization.length; customIndex++) {
 
                         // 資料庫的custom在傳入的custom的第幾筆
@@ -173,7 +123,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                     `
-                    await queryAsync(connection, updateSql, [sameOptionCustomID, food, customerID, restaurantName, amount, sameOptionCustomID, food, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, customerID, restaurantName, amount, sameOptionCustomID, food, customerID, restaurantName]);
                 } else {
                     // 購物車不存在同樣客製化
 
@@ -188,7 +138,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                         AND CustomerID = ?
                         AND restaurantName = ?),
                     ?, ?, ?, ?, ?`;
-                    await queryAsync(connection, insertCartSql, [food, customerID, restaurantName, amount, note, food, customerID, restaurantName]);
+                    await connectionTool.query(connection, insertCartSql, [food, customerID, restaurantName, amount, note, food, customerID, restaurantName]);
                     let insertCustomSql = 
                     `
                     INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Option, Custom, RestaurantName) 
@@ -201,7 +151,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                     `;
                     for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                         for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
-                            await queryAsync(connection, insertCustomSql, [food, customerID, restaurantName, customerID, food, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                            await connectionTool.query(connection, insertCustomSql, [food, customerID, restaurantName, customerID, food, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
                         }
                     }
                 }
@@ -217,7 +167,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                     AND CustomerID = ?
                     AND restaurantName = ?),
                 ?, ?, ?, ?, ?`;
-                await queryAsync(connection, insertCartSql, [food, customerID, restaurantName, amount, note, food, customerID, restaurantName]);
+                await connectionTool.query(connection, insertCartSql, [food, customerID, restaurantName, amount, note, food, customerID, restaurantName]);
                 let insertCustomSql = 
                 `
                 INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Option, Custom, RestaurantName) 
@@ -230,7 +180,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                 `;
                 for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                     for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
-                        await queryAsync(connection, insertCustomSql, [food, customerID, restaurantName, customerID, food, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                        await connectionTool.query(connection, insertCustomSql, [food, customerID, restaurantName, customerID, food, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
                     }
                 }
             }
@@ -257,7 +207,7 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                 AND CustomerID = ? 
                 AND RestaurantName = ?
                 `
-                await queryAsync(connection, updateSql, [food, customerID, restaurantName, amount, food, customerID, restaurantName]);
+                await connectionTool.query(connection, updateSql, [food, customerID, restaurantName, amount, food, customerID, restaurantName]);
             } else {
                 // 此商品不存在購物車
                 // 新增至購物車
@@ -266,18 +216,17 @@ module.exports = async function (amount, custom, option, note, food, customerID,
                 INSERT INTO CART(CustomID, Amount, Note, Food, CustomerID, restaurantName)
                 VALUES(1, ?, ?, ?, ?, ?)
                 `;
-                await queryAsync(connection, insertSql, [amount, note, food, customerID, restaurantName]);
+                await connectionTool.query(connection, insertSql, [amount, note, food, customerID, restaurantName]);
             }
         }
 
-        await commit(connection);
-        connection.release();
+        await connectionTool.commit(connection);
+        await connectionTool.release(connection);
     } catch (error) {
         console.log(error);
-        await rollback(connection);
-        connection.release();
+        await connectionTool.rollback(connection);
+        await connectionTool.release(connection);
         throw error;
-
     }
 
 }

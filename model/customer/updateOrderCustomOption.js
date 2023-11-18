@@ -1,4 +1,5 @@
 const getPool = require('../connectionDB.js');
+const connectionTool = require('../connectionTool.js');
 
 /**
  * 新增顧客訂單，如果已經有了就會變修改數量。
@@ -11,30 +12,22 @@ const getPool = require('../connectionDB.js');
 
 module.exports = async function (custom, option, food, customerID, restaurantName) {
 
-    return new Promise((resolve, reject) => {
-        let sql =
-        `
-        UPDATE CART_CUSTOMIZE
-        SET \`Option\` = "${option}"
-        WHERE Custom = "${custom}" 
-        AND Food = "${food}"
-        AND CustomerID = "${customerID}"
-        AND RestaurantName = "${restaurantName}"
-        `;
-        const pool = getPool();
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                throw conn_err;
-            }
-            connection.query(sql, (query_err, results) => {
-                if (query_err) {
-                    throw query_err;
-                }
-                resolve(results);
-            })
-            if (connection) {
-                connection.release();
-            }
-        })
-    })
+    let sql =
+    `
+    UPDATE CART_CUSTOMIZE
+    SET \`Option\` = ?
+    WHERE Custom = ? 
+    AND Food = ?
+    AND CustomerID = ?
+    AND RestaurantName = ?
+    `;
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
+    try {
+        await connectionTool.query(connection, sql, [option, custom, food, customerID, restaurantName]);
+        await connectionTool.release(connection);
+    } catch(error) {
+        await connectionTool.release(connection);
+        throw error;
+    } 
 }

@@ -11,9 +11,10 @@ const connectionTool = require('../connectionTool.js');
 
 module.exports = async function (customerID, quantity, food, restaurantName) {
 
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
     try {
-        const pool = getPool();
-        let connection = await connectionTool.getConnection(pool);
+        await connectionTool.beginTransaction(connection);
         for (let num = 0; num < quantity.length; num++) {
             let sql =
             `
@@ -24,9 +25,11 @@ module.exports = async function (customerID, quantity, food, restaurantName) {
             `;
             await connectionTool.query(connection, sql, [customerID, food[num], quantity[num], restaurantName, quantity[num]]);
         }
-        connectionTool.release(connection);
+        await connectionTool.commit(connection);
+        await connectionTool.release(connection);
     } catch(error) {
-        connectionTool.release(connection);
+        await connectionTool.rollback(connection);
+        await connectionTool.release(connection);
         throw error;
     }
 }

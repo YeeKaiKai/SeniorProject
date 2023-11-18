@@ -1,4 +1,5 @@
 const getPool = require('../connectionDB.js');
+const connectionTool = require('../connectionTool.js');
 
 /**
  * 新增顧客訂單，如果已經有了就會變修改數量。
@@ -9,71 +10,35 @@ const getPool = require('../connectionDB.js');
 
 module.exports = async function (customerID, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber) {
     
-    return new Promise((resolve, reject) => {
-        
-        const pool = getPool();
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                connection.release();
-                reject(conn_err);
-                return;
-            }
-            connection.beginTransaction((tran_err) => {
-                if (tran_err) {
-                    connection.rollback(() => {
-                        connection.release();
-                        reject(tran_err);
-                        return;
-                    });
-                }
-                let insertSql =
-                `
-                INSERT INTO \`ORDER\`(OrderID, TotalSum, RestaurantName, OrderDate, OrderTime, ForHere, TableNumber, PhoneNumber)
-                SELECT (SELECT 
-                    IFNULL(MAX(OrderID), 0) + 1 
-                    FROM \`ORDER\` 
-                    WHERE RestaurantName = ?), 
-                ?, ?, ?, ?, ?, ?, ?
-                `;
-                connection.query(insertSql, [restaurantName, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber], (query_err, results) => {
-                    if (query_err) {
-                        connection.rollback(() => {
-                            connection.release();
-                            reject(query_err);
-                            return;
-                        });
-                    }
-                    let updateSql = 
-                    `
-                    UPDATE \`CART\`
-                    SET OrderID = (SELECT MAX(OrderID) FROM \`ORDER\`), Confirmed = TRUE
-                    WHERE CustomerID = ?
-                    AND RestaurantName = ?
-                    AND ISNULL(OrderID)
-                    `;
-                    connection.query(updateSql, [customerID, restaurantName], (query_err, results) => {
-                        if (query_err) {
-                            connection.rollback(() => {
-                                connection.release();
-                                reject(query_err);
-                                return;
-                            })
-                        }
-                        connection.commit((commit_err) => {
-                            if (commit_err) {
-                                connection.rollback(() => {
-                                    connection.release();
-                                    reject(commit_err);
-                                    return;
-                                })
-                            }
-                            connection.release();
-                            resolve(results);
-                            return;
-                        })
-                    })
-                })
-            })
-        })
-    })
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
+
+    try {
+        await connectionTool.beginTransaction(connection);
+        let insertSql =
+        `
+        INSERT INTO \`ORDER\`(OrderID, TotalSum, RestaurantName, OrderDate, OrderTime, ForHere, TableNumber, PhoneNumber)
+        SELECT (SELECT 
+            IFNULL(MAX(OrderID), 0) + 1 
+            FROM \`ORDER\` 
+            WHERE RestaurantName = ?), 
+        ?, ?, ?, ?, ?, ?, ?
+        `;
+        await connectionTool.query(connection, insertSql, [restaurantName, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber]);
+        let updateSql = 
+        `
+        UPDATE \`CART\`
+        SET OrderID = (SELECT MAX(OrderID) FROM \`ORDER\`), Confirmed = TRUE
+        WHERE CustomerID = ?
+        AND RestaurantName = ?
+        AND ISNULL(OrderID)
+        `;
+        await connectionTool.query(connection, updateSql, [customerID, restaurantName]);
+        await connectionTool.commit(connection);
+        await connectionTool.release(connection);
+    } catch(error) {
+        await connectionTool.rollback(connection);
+        await connectionTool.release(connection);
+        throw error;
+    }
 }
