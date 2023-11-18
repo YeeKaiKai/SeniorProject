@@ -1,7 +1,7 @@
 const createCartAndCustomize = require('../../model/customer/createCartAndCustomize.js');
 const deleteSingleCart = require('../../model/customer/deleteSingleCart.js');
 const requireCart = require('../../model/customer/requireCart.js');
-const updateSingleCart = require('../../model/customer/updateSingleCart.js');
+const updateCartAndCustomize = require('../../model/customer/updateCartAndCustomize.js');
 
 exports.postCart = async function(req, res, next) {
 
@@ -33,12 +33,16 @@ exports.getCart = async function(req, res, next) {
 
 exports.patchCart = async function(req, res, next) {
 
-    let customerID = req.body.customerID;
-    let restaurantName = req.params.restaurantName; 
-    let quantity = req.body.quantity;
+    let amount = req.body.amount;
+    let custom = req.body.custom;
+    let option = req.body.option;
+    let note = req.body.note;
     let food = req.body.food;
+    let customerID = req.body.customerID;
+    let restaurantName = req.params.restaurantName;
+    let customID = req.body.customID;
 
-    await updateSingleCart(customerID, quantity, food, restaurantName);
+    await updateCartAndCustomize(amount, custom, option, note, food, customerID, customID, restaurantName);
 
 }
 
