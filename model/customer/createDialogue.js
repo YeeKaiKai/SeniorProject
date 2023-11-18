@@ -12,9 +12,9 @@ module.exports = async function (customerID, dialogue, restaurantName) {
     const connection = await connectionTool.getConnection(pool);
     try {
         await connectionTool.query(connection, sql, [customerID, dialogue]);
-        await connectionTool.release(connection);
+        connection.release();
     } catch(error) {
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 }

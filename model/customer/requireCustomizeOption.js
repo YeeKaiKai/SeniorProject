@@ -9,17 +9,17 @@ module.exports = async function (restaurantName, food) {
     FROM CUSTOMIZE as C
     NATURAL JOIN CUSTOM_OPTION AS CO
     NATURAL JOIN FOOD_CUSTOM AS FC
-    WHERE C.RestaurantName = ?
+    WHERE C.RestaurantName = ? 
     AND C.Food = ?
     `;
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
     try {
         const results = await connectionTool.query(connection, sql, [restaurantName, food]);
-        await connectionTool.release(connection);
+        connection.release();
         return results;
     } catch(error) {
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 } 

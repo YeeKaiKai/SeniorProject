@@ -23,9 +23,9 @@ module.exports = async function (customerID, quantity, food, note, restaurantNam
     `;
     try {
         await connectionTool.query(connection, sql, [customerID, customerID, food, restaurantName, food, quantity, note, restaurantName, quantity]);
-        await connectionTool.release(connection);
+        connection.release();
     } catch(error) {
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 }

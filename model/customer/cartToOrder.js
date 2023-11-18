@@ -35,10 +35,10 @@ module.exports = async function (customerID, totalSum, restaurantName, orderDate
         `;
         await connectionTool.query(connection, updateSql, [customerID, restaurantName]);
         await connectionTool.commit(connection);
-        await connectionTool.release(connection);
+        connection.release();
     } catch(error) {
         await connectionTool.rollback(connection);
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 }

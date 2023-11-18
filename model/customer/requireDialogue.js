@@ -22,10 +22,10 @@ module.exports = async function (customerID, restaurantName) {
                 text = text + results[start + i].Content + "\n";
             }
         }
-        connectionTool.release(connection);
+        connection.release();
         return text;
     } catch(error) {
-        connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 } 

@@ -221,11 +221,11 @@ module.exports = async function (amount, custom, option, note, food, customerID,
         }
 
         await connectionTool.commit(connection);
-        await connectionTool.release(connection);
+        connection.release();
     } catch (error) {
         console.log(error);
         await connectionTool.rollback(connection);
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 

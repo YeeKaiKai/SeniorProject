@@ -22,11 +22,11 @@ module.exports = async function (restaurantName, customerID) {
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
     try {
-        const results = connectionTool.query(connection, sql, [restaurantName, customerID]);
-        connectionTool.release(connection);
+        const results = await connectionTool.query(connection, sql, [restaurantName, customerID]);
+        connection.release();
         return results;
     } catch(error) {
-        connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 } 

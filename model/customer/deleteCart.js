@@ -16,10 +16,10 @@ module.exports = async function (customerID, food, restaurantName) {
             await connectionTool.query(connection, sql, [customerID, food[num], restaurantName]);
         }
         await connectionTool.commit(connection);
-        await connectionTool.release(connection);
+        connection.release();
     } catch(error) {
         await connectionTool.rollback(connection);
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 }

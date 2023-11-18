@@ -25,9 +25,9 @@ module.exports = async function (custom, option, food, customerID, restaurantNam
     const connection = await connectionTool.getConnection(pool);
     try {
         await connectionTool.query(connection, sql, [option, custom, food, customerID, restaurantName]);
-        await connectionTool.release(connection);
+        connection.release();
     } catch(error) {
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     } 
 }

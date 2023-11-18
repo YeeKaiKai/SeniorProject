@@ -12,9 +12,9 @@ module.exports = async function (customerID, food, restaurantName) {
         WHERE CustomerID = ? AND Food = ? AND RestaurantName = ?
         `;
         await connectionTool.query(connection, sql, [customerID, food, restaurantName]);
-        await connectionTool.release(connection);
+        connection.release();
     } catch(error) {
-        await connectionTool.release(connection);
+        connection.release();
         throw error;
     }
 }

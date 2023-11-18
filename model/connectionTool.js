@@ -52,14 +52,3 @@ exports.commit = async function (connection) {
         });
     })
 }
-
-exports.release = async function (connection) {
-    return new Promise((resolve, reject) => {
-        connection.release((release_err) => {
-            if (release_err) {
-                return reject(release_err);
-            }
-            resolve();
-        });
-    })
-}
