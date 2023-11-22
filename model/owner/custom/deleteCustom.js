@@ -1,16 +1,13 @@
-const getPool = require('../connectionDB.js');
+const getPool = require('../../connectionDB.js');
 
-module.exports = async function (oldCustom, newCustom, minOption, maxOption, restaurantName) {
+module.exports = async function (custom, restaurantName) {
 
     return new Promise((resolve, reject) => {
-        let sql =
+        let sql = 
         `
-        UPDATE FOOD_CUSTOM
-        SET Custom = "${newCustom}",
-        MinOption = "${minOption}",
-        MaxOption = "${maxOption}"
-        WHERE Custom = "${oldCustom}"
-        AND RestaurantName = "${restaurantName}"
+        DELETE FROM FOOD_CUSTOM
+        WHERE Custom = "${custom}" 
+        AND RestaurantName = "${restaurantName}";
         `;
         const pool = getPool();
         pool.getConnection((conn_err, connection) => {
@@ -27,5 +24,5 @@ module.exports = async function (oldCustom, newCustom, minOption, maxOption, res
                 connection.release();
             }
         })
-    })
+    }) 
 }

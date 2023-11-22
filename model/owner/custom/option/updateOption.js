@@ -1,4 +1,4 @@
-const getPool = require('../connectionDB.js');
+const getPool = require('../../../connectionDB.js');
 
 /**
  * 新增顧客訂單，如果已經有了就會變修改數量。

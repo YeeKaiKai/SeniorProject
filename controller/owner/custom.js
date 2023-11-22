@@ -1,11 +1,11 @@
-const createCustom = require('../../model/owner/createCustom.js');
-const createOption = require('../../model/owner/createOption.js');
-const deleteCustom = require('../../model/owner/deleteCustom.js');
-const deleteOption = require('../../model/owner/deleteOption.js');
-const requireCustom = require('../../model/owner/requireCustom.js');
-const requireOption = require('../../model/owner/requireOption.js');
-const updateCustom = require('../../model/owner/updateCustom.js');
-const updateOption = require('../../model/owner/updateOption.js');
+const createCustom = require('../../model/owner/custom/createCustom.js');
+const createOption = require('../../model/owner/custom/option/createOption.js');
+const deleteCustom = require('../../model/owner/custom/deleteCustom.js');
+const deleteOption = require('../../model/owner/custom/option/deleteOption.js');
+const requireCustom = require('../../model/owner/custom/requireCustom.js');
+const requireOption = require('../../model/owner/custom/option/requireOption.js');
+const updateCustom = require('../../model/owner/custom/updateCustom.js');
+const updateOption = require('../../model/owner/custom/option/updateOption.js');
 
 exports.postCustom = async function(req, res, next) {
     

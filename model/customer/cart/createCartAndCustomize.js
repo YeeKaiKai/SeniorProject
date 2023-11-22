@@ -1,5 +1,5 @@
-const getPool = require('../connectionDB.js');
-const connectionTool = require('../connectionTool.js');
+const getPool = require('../../connectionDB.js');
+const connectionTool = require('../../connectionTool.js');
 
 /**
  * 加入食物至購物車，如果沒點過就直接新稱，若已經點過，先查詢該食物有沒有同樣的客製化，有的話更新訂單數量，沒有的話新增客製化

@@ -1,17 +1,12 @@
-const getPool = require('../connectionDB.js');
+const getPool = require('../../connectionDB.js');
 
-/**
- *
- * @param {String} restaurantName
- */
-module.exports = async function (restaurantName) {
+module.exports = async function (customerID, restaurantName) {
 
     return new Promise((resolve, reject) => {
         let sql = 
         `
-        SELECT *
-        FROM FOOD_CUSTOM
-        WHERE RestaurantName = "${restaurantName}";
+        DELETE FROM \`ORDER\`
+        WHERE CustomerID = "${customerID}" AND RestaurantName = "${restaurantName}";
         `;
         const pool = getPool();
         pool.getConnection((conn_err, connection) => {
@@ -28,5 +23,5 @@ module.exports = async function (restaurantName) {
                 connection.release();
             }
         })
-    })
+    }) 
 }

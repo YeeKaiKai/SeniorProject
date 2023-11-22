@@ -1,4 +1,4 @@
-const getPool = require('../connectionDB.js');
+const getPool = require('../../connectionDB.js');
 
 /**
  * Owner Create a new food custom

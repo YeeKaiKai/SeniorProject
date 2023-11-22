@@ -1,4 +1,4 @@
-const requireOrder = require('../../model/owner/requireOrder.js');
+const requireOrder = require('../../model/owner/order/requireOrder.js');
 const updateOrder = require('../../model/owner/updatePaid.js');
 
 exports.getOrder = async function(req, res, next) {
