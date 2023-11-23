@@ -1,13 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
-const order = require('../controller/owner/order.js')
+const order = require('../controller/owner/order.js');
 const custom = require('../controller/owner/custom.js');
+const identify = require('../controller/owner/identify.js');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
+
+router.post('/:restaurantName/regist', identify.postRegist);
 
 router.get('/:restaurantName/order', order.getOrder);
 router.delete('/:restaurantName/order', order.deleteOrder);
