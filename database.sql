@@ -2,6 +2,10 @@ CREATE TABLE RESTAURANT
 (
   RestaurantName VARCHAR(30) NOT NULL,
   RestaurantName_zh_tw VARCHAR(50) NOT NULL,
+  Email VARCHAR(50) NOT NULL,
+  `Password` VARCHAR(30) NOt NULL,
+  BusinessHours VARCHAR(20) NOT NULL,
+  TEL VARCHAR(10) NOT NULL,
   Address VARCHAR(60) NOT NULL,
   PRIMARY KEY (RestaurantName)
 );
@@ -13,6 +17,7 @@ CREATE TABLE `TABLE`
   RestaurantName VARCHAR(30) NOT NULL,
   PRIMARY KEY (TableNumber, RestaurantName),
   FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
+  ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE MENU
