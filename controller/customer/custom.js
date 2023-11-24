@@ -1,4 +1,4 @@
-const requireCustomizeOption = require('../../model/customer/requireCustomizeOption.js');
+const requireCustomizeOption = require('../../model/customer/custom/requireCustomizeOption.js');
 
 exports.getCustomizeOption = async function(req, res, next) {
 
