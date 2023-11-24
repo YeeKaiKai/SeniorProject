@@ -5,7 +5,8 @@ module.exports = async function (restaurantName) {
     return new Promise((resolve, reject) => {
         let sql = 
         `
-        SELECT *
+        SELECT c.CustomerID, c.Amount, c.Food, c.CustomID, c.RestaurantName, c.Note, c.Confirmed, 
+                c.OrderID, cc.Option, cc.Custom, o.TotalSum, o.OrderDate, o.OrderTime, o.Forhere, o.TableNumber, o.PhoneNumber, o.Paid
         FROM CART c
         LEFT JOIN CART_CUSTOMIZE cc ON c.CustomerID = cc.CustomerID 
         AND c.Food = cc.Food 
