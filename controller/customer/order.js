@@ -30,7 +30,7 @@ exports.getOrder = async function(req, res, next) {
         let customerID = req.query.customerID;
         let restaurantName = req.params.restaurantName;
         
-        let results = await requireOrder(restaurantName, customerID)
+        let results = await requireOrder(restaurantName, customerID);
         res.send(results);
     } catch (error) {
         res.send(error);
