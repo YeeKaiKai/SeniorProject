@@ -8,7 +8,7 @@ const connectionTool = require('../connectionTool.js');
  * @param {*} restaurantName
  */
 
-module.exports = async function (customerID, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber) {
+module.exports = async function (customerID, totalSum, restaurantName, orderNote, orderDate, orderTime, forHere, tableNumber, phoneNumber) {
     
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
@@ -17,14 +17,14 @@ module.exports = async function (customerID, totalSum, restaurantName, orderDate
         await connectionTool.beginTransaction(connection);
         let insertSql =
         `
-        INSERT INTO \`ORDER\`(OrderID, TotalSum, RestaurantName, OrderDate, OrderTime, ForHere, TableNumber, PhoneNumber)
+        INSERT INTO \`ORDER\`(OrderID, TotalSum, RestaurantName, orderNote, OrderDate, OrderTime, ForHere, TableNumber, PhoneNumber)
         SELECT (SELECT 
             IFNULL(MAX(OrderID), 0) + 1 
             FROM \`ORDER\` 
             WHERE RestaurantName = ?), 
         ?, ?, ?, ?, ?, ?, ?
         `;
-        await connectionTool.query(connection, insertSql, [restaurantName, totalSum, restaurantName, orderDate, orderTime, forHere, tableNumber, phoneNumber]);
+        await connectionTool.query(connection, insertSql, [restaurantName, totalSum, restaurantName, orderNote, orderDate, orderTime, forHere, tableNumber, phoneNumber]);
         let updateSql = 
         `
         UPDATE \`CART\`
