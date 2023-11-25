@@ -4,6 +4,7 @@ var router = express.Router();
 const order = require('../controller/owner/order.js');
 const custom = require('../controller/owner/custom.js');
 const identify = require('../controller/owner/identify.js');
+const category = require('../controller/owner/category.js');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -12,18 +13,21 @@ router.get('/', function(req, res, next) {
 
 router.post('/:restaurantName/regist', identify.postRegist);
 
-router.get('/:restaurantName/order', order.getOrder);
-router.delete('/:restaurantName/order', order.deleteOrder);
-
+router.post('/:restaurantName/category', category.postCategory);
 router.post('/:restaurantName/custom', custom.postCustom);
 router.post('/:restaurantName/custom/option', custom.postOption);
 
+router.delete('/:restaurantName/category', category.deleteCategory);
 router.delete('/:restaurantName/custom', custom.deleteCustom);
 router.delete('/:restaurantName/custom/option', custom.deleteOption);
+router.delete('/:restaurantName/order', order.deleteOrder);
 
+router.get('/:restaurantName/category', category.getCategory);
 router.get('/:restaurantName/custom', custom.getCustom);
 router.get('/:restaurantName/custom/option', custom.getOption);
+router.get('/:restaurantName/order', order.getOrder);
 
+router.patch('/:restaurantName/category', category.patchCategory);
 router.put('/:restaurantName/custom', custom.putCustom);
 router.put('/:restaurantName/custom/option', custom.putOption);
 
