@@ -1,61 +1,22 @@
-const getPool = require("../model/connectionDB.js");
+const getPool = require("./connectionDB.js");
+const connectionTool = require('./connectionTool.js');
 
 module.exports = async function (restaurantName) {
-    // let sql = 
-    // `
-    // SELECT Content
-    // FROM DIALOGUE
-    // WHERE customerID = "${customerID}"
-    // `;
-    // pool.getConnection((conn_err, connection) => {
-    //     if (conn_err) {
-    //         throw conn_err;
-    //     } 
-    //     connection.query(sql, (query_err, results) => {
-    //         if (query_err) {
-    //             throw query_err;
-    //         }
-    //         // 兩次轉換會變乾淨
-    //         results = JSON.stringify(results);
-    //         results = JSON.parse(results);
 
-    //         // 取出純文字內容
-    //         let test;
-    //         for (let i = 0; i < results.length; i++) {
-    //             test = test + results[i].Content + "\n";
-    //         }
-    //         console.log(results);
-    //         return results;
-    //     })
-    //     if (connection) {
-    //         connection.release();
-    //     }
-    // })
-
-    // ----------------------------
-
-    return new Promise((resolve, reject) => {
-        let sql = 
-        `
-        SELECT Food, Description, Quantity, Category, Ingredient, Price
-        FROM MENU
-        WHERE RestaurantName = "${restaurantName}";
-        `;
-        const pool = getPool();
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                reject(conn_err);
-            } 
-            connection.query(sql, (query_err, results) => {
-                if (query_err) {
-                    reject(query_err);
-                } 
-                resolve(results);
-            })
-            if (connection) {
-                connection.release();
-            }
-        })
-    })
-
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
+    let sql = 
+    `
+    SELECT Food, Description, Quantity, Category, Ingredient, Price
+    FROM MENU
+    WHERE RestaurantName = ?;
+    `;
+    try {
+        let results = await connectionTool.query(connection, sql, [restaurantName]);
+        connection.release();
+        return results;
+    } catch(error) {
+        connection.release();
+        throw error;
+    }
 } 

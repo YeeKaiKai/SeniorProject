@@ -1,4 +1,5 @@
 const getPool = require('../../connectionDB.js');
+const connectionTool = require('../../connectionTool.js');
 
 /**
  *
@@ -6,27 +7,20 @@ const getPool = require('../../connectionDB.js');
  */
 module.exports = async function (restaurantName) {
 
-    return new Promise((resolve, reject) => {
-        let sql = 
-        `
-        SELECT *
-        FROM FOOD_CUSTOM
-        WHERE RestaurantName = "${restaurantName}";
-        `;
-        const pool = getPool();
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                throw conn_err;
-            }
-            connection.query(sql, (query_err, results) => {
-                if (query_err) {
-                    throw query_err;
-                }
-                resolve(results);
-            })
-            if (connection) {
-                connection.release();
-            }
-        })
-    })
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
+    let seleteSql = 
+    `
+    SELECT *
+    FROM FOOD_CUSTOM
+    WHERE RestaurantName = "${restaurantName}";
+    `;
+    try {
+        let results = await connectionTool.query(connection, seleteSql, [restaurantName]);
+        connection.release();
+        return results;
+    } catch(error) {
+        connection.release();
+        throw error;
+    }
 }

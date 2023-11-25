@@ -1,4 +1,5 @@
 const getPool = require('../../../connectionDB.js');
+const connectionTool = require('../../../connectionTool.js');
 
 /**
  * 新增顧客訂單，如果已經有了就會變修改數量。
@@ -10,36 +11,27 @@ const getPool = require('../../../connectionDB.js');
 
 module.exports = async function (custom, oldOption, newOption, optionPrice, restaurantName) {
 
-    return new Promise((resolve, reject) => {
-        let result;
-        const pool = getPool();
-        
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                throw conn_err;
-            }
-            for (let num = 0; num < oldOption.length; num++) {
-                let sql = 
-                `
-                UPDATE CUSTOM_OPTION
-                SET \`Option\` = "${newOption[num]}",
-                OptionPrice = "${optionPrice[num]}"
-                WHERE Custom = "${custom}" 
-                AND \`Option\` = "${oldOption[num]}"
-                AND RestaurantName = "${restaurantName}";
-                `;
-                console.log(sql);
-                connection.query(sql, (query_err, results) => {
-                    if (query_err) {
-                        throw query_err;
-                    }
-                    result = results;
-                })
-            }
-            if (connection) {
-                connection.release();
-            }
-            resolve(result);
-        })
-    }) 
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
+    try {
+        await connectionTool.beginTransaction(connection);
+        for (let num = 0; num < oldOption.length; num++) {
+            let updateSql = 
+            `
+            UPDATE CUSTOM_OPTION
+            SET \`Option\` = ?,
+            OptionPrice = ?
+            WHERE Custom = ? 
+            AND \`Option\` = ?
+            AND RestaurantName = ?;
+            `;
+            await connectionTool.query(connection, updateSql, [newOption[num], optionPrice[num], custom, oldOption[num], restaurantName]);
+        }
+        connectionTool.commit(connection);
+        connection.release();
+    } catch(error) {
+        connectionTool.rollback(connection);
+        connection.release();
+        throw error;
+    }
 }

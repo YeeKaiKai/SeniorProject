@@ -1,4 +1,5 @@
 const getPool = require('../../connectionDB.js');
+const connectionTool = require('../../connectionTool.js');
 
 /**
  * Owner Create a new food custom
@@ -9,27 +10,18 @@ const getPool = require('../../connectionDB.js');
  */
 module.exports = async function (custom, minOption, maxOption, restaurantName) {
 
-    return new Promise((resolve, reject) => {
-        const pool = getPool();
-    
-        pool.getConnection((conn_err, connection) => {
-            if (conn_err) {
-                throw conn_err;
-            }
-            let sql = 
-            `
-            INSERT INTO FOOD_CUSTOM(Custom, RestaurantName, MinOption, MaxOption)
-            VALUES("${custom}", "${restaurantName}", "${minOption}", "${maxOption}");
-            `;
-            connection.query(sql, (query_err, results) => {
-                if (query_err) {
-                    throw query_err;
-                }
-                resolve(results);
-            })
-            if (connection) {
-                connection.release();
-            }
-        })
-    })
+    const pool = getPool();
+    const connection = await connectionTool.getConnection(pool);
+    let insertSql = 
+    `
+    INSERT INTO FOOD_CUSTOM(Custom, RestaurantName, MinOption, MaxOption)
+    VALUES(?, ?, ?, ?);
+    `;
+    try {
+        await connectionTool.query(connection, insertSql, [custom, restaurantName, minOption, maxOption]);
+        connection.release();
+    } catch(error) {
+        connection.release();
+        throw error;
+    }
 }
