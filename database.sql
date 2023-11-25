@@ -20,17 +20,27 @@ CREATE TABLE `TABLE`
   ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE MENU_CATEGORY
+(
+  Category VARCHAR(20) NOT NULL,
+  MenuAmount INT NULL,
+  RestaurantName VARCHAR(30) NOT NULL,
+  PRIMARY KEY (Category, RestaurantName),
+  FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
+  ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE MENU
 (
   Food VARCHAR(30) NOT NULL,
   Description VARCHAR(100) NOT NULL,
   Quantity INT NOT NULL,
-  Category VARCHAR(20) NOT NULL,
   Ingredient VARCHAR(100) NOT NULL,
   Price INT NOT NULL,
+  Category VARCHAR(20) NOT NULL,
   RestaurantName VARCHAR(30) NOT NULL,
-  PRIMARY KEY (Food, RestaurantName),
-  FOREIGN KEY (RestaurantName) REFERENCES RESTAURANT(RestaurantName)
+  PRIMARY KEY (Food, Category, RestaurantName),
+  FOREIGN KEY (Category, RestaurantName) REFERENCES MENU_CATEGORY(Category, RestaurantName)
 );
 
 CREATE TABLE FOOD_CUSTOM
