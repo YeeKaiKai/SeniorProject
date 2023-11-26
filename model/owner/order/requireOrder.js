@@ -26,9 +26,33 @@ module.exports = async function (restaurantName) {
     try {
         let results = await connectionTool.query(connection, selectSql, [restaurantName]);
         connection.release();
+        results = calculateTotal(results);
         return results;
     } catch(error) {
         connection.release();
         throw error;
     }
 } 
+
+function calculateTotal(orders) {
+    const totals = {};
+    
+    orders.forEach(order => {
+        // 以 CustomID 和 Food 結合作為 key 判斷
+        const key = order.CustomID + '_' + order.Food;
+        // 檢查該食物是否已存在於 totals 中
+        if (!totals[key]) {
+            totals[key] = order.Price + (order.OptionPrice || 0);
+        } else {
+            // 只加上 OptionPrice，因為 Price 已被計算過一次
+            totals[key] += (order.OptionPrice || 0);
+        }
+    });
+
+    orders.forEach(order => {
+        const key = order.CustomID + '_' + order.Food;
+        order.customIDSum = totals[key];
+    });
+
+    return orders;
+}
