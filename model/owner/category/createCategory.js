@@ -14,7 +14,7 @@ module.exports = async function (category, restaurantName) {
     let sql =
     `
     INSERT INTO MENU_CATEGORY(Category, MenuAmount, RestaurantName)
-    VALUES ?, ?, ?
+    VALUES (?, ?, ?)
     `;
     try {
         await connectionTool.query(connection, sql, [category, 0, restaurantName]);
