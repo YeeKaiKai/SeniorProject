@@ -14,7 +14,7 @@ const _ = require('lodash');
  * @param {*} restaurantName
  */
 
-module.exports = async function (amount, custom, oldOption, newOption, note, food, customerID, customID, restaurantName) {
+module.exports = async function (amount, custom, oldOption, newOption, note, food, category, customerID, customID, restaurantName) {
     
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
@@ -43,10 +43,11 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                     SET Amount = ?, Note = ?
                     WHERE CustomID = ? 
                     AND Food = ?
+                    AND Category = ?
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                     `
-                    await connectionTool.query(connection, updateSql, [amount, note, customID, food, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateSql, [amount, note, customID, food, category, customerID, restaurantName]);
             } else {
                 // 有更新客製化
 
@@ -118,15 +119,17 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                         FROM \`CART\` 
                         WHERE CustomID = ? 
                         AND Food = ? 
+                        AND Category = ?
                         AND CustomerID = ? 
                         AND RestaurantName = ?
                     ) + ? 
                     WHERE CustomID = ? 
                     AND Food = ?
+                    AND Category = ?
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                     `
-                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, customerID, restaurantName, amount, sameOptionCustomID, food, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, category, customerID, restaurantName, amount, sameOptionCustomID, food, category, customerID, restaurantName]);
     
                     // 將原購物車數量減至0(刪除)
                     let deleteSql = 
@@ -138,9 +141,9 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                     deleteSql = 
                     `
                     DELETE FROM CART
-                    WHERE CustomerID = ? AND CustomID = ? AND Food = ? AND RestaurantName = ?
+                    WHERE CustomerID = ? AND CustomID = ? AND Food = ? AND Category = ? AND RestaurantName = ?
                     `;
-                    await connectionTool.query(connection, deleteSql, [customerID, customID, food, restaurantName]);
+                    await connectionTool.query(connection, deleteSql, [customerID, customID, food, category, restaurantName]);
     
                 } else {
                     // 購物車不存在同樣客製化
@@ -150,9 +153,9 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                     `
                     UPDATE CART 
                     SET Amount = ?, Note = ?
-                    WHERE CustomID = ? AND Food= ? AND CustomerID = ? AND RestaurantName = ?
+                    WHERE CustomID = ? AND Food= ? AND Category = ? AND CustomerID = ? AND RestaurantName = ?
                     `;
-                    await connectionTool.query(connection, updateCartSql, [amount, note, customID, food, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateCartSql, [amount, note, customID, food, category, customerID, restaurantName]);
                     let updateCustomSql = 
                     `
                     UPDATE CART_CUSTOMIZE
@@ -177,10 +180,11 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
             SET Amount = ? 
             WHERE CustomID = 1 
             AND Food = ?
+            AND Category = ?
             AND CustomerID = ? 
             AND RestaurantName = ?
             `
-            await connectionTool.query(connection, updateSql, [amount, food, customerID, restaurantName]);
+            await connectionTool.query(connection, updateSql, [amount, food, category, customerID, restaurantName]);
         }
 
         await connectionTool.commit(connection);
