@@ -22,7 +22,7 @@ module.exports = async function (customerID, totalSum, restaurantName, orderNote
             IFNULL(MAX(OrderID), 0) + 1 
             FROM \`ORDER\` 
             WHERE RestaurantName = ?), 
-        ?, ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?, ?
         `;
         await connectionTool.query(connection, insertSql, [restaurantName, totalSum, restaurantName, orderNote, orderDate, orderTime, forHere, tableNumber, phoneNumber]);
         let updateSql = 
@@ -31,7 +31,7 @@ module.exports = async function (customerID, totalSum, restaurantName, orderNote
         SET OrderID = (SELECT MAX(OrderID) FROM \`ORDER\`), Confirmed = TRUE
         WHERE CustomerID = ?
         AND RestaurantName = ?
-        AND ISNULL(OrderID)
+        AND Confirmed = FALSE
         `;
         await connectionTool.query(connection, updateSql, [customerID, restaurantName]);
         await connectionTool.commit(connection);
