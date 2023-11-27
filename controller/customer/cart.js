@@ -49,7 +49,7 @@ exports.patchCart = async function(req, res, next) {
     let restaurantName = req.params.restaurantName;
     let customID = req.body.customID;
 
-    try {
+    try { 
         await updateCartAndCustomize(amount, custom, oldOption, newOption, note, food, category, customerID, customID, restaurantName);
     } catch(error) {
         res.send(error);
@@ -60,7 +60,7 @@ exports.patchCart = async function(req, res, next) {
 exports.deleteCart = async function(req, res, next) {
 
     let customerID = req.body.customerID;
-    let restaurantName = req.body.restaurantName; 
+    let restaurantName = req.params.restaurantName; 
     let customID = req.body.customID;
     let food = req.body.food;
     let category = req.body.category;
