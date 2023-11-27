@@ -45,9 +45,8 @@ exports.deleteCategory = async function(req, res, next) {
 
     try {
         let restaurantName = req.params.restaurantName;
-        let newCategory = req.body.newCategory;
-        let oldCategory = req.body.oldCategory;
-        await deleteCategory(newCategory, oldCategory, restaurantName);
+        let category = req.body.category;
+        await deleteCategory(category, restaurantName);
         res.send();
     } catch (error) {
         res.send(error);
