@@ -5,7 +5,7 @@ module.exports = async function (restaurantName, customerID) {
 
     let sql = 
     `
-    SELECT c.CustomerID, c.Amount, c.Food, c.Category, c.CustomID, c.RestaurantName, c.Note, c.Confirmed, cc.Option, cc.Custom, m.Price, co.OptionPrice
+    SELECT c.CustomerID, c.Amount, c.Food, c.Category, c.CustomID, c.RestaurantName, c.Note, c.Confirmed, cc.Option, cc.Custom, m.Price, m.Quantity, co.OptionPrice
     FROM CART c
     LEFT JOIN CART_CUSTOMIZE cc ON c.CustomerID = cc.CustomerID 
     AND c.Food = cc.Food 
