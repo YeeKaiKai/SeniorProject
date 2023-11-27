@@ -60,10 +60,11 @@ exports.deleteCart = async function(req, res, next) {
 
     let customerID = req.body.customerID;
     let restaurantName = req.body.restaurantName; 
+    let customID = req.body.customID;
     let food = req.body.food;
 
     try {
-        await deleteSingleCart(customerID, food, restaurantName);
+        await deleteSingleCart(customID, customerID, food, restaurantName);
     } catch(error) {
         res.send(error);
     }
