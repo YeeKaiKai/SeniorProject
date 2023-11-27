@@ -71,6 +71,7 @@ exports.postDiagolue = async function(req, res, next) {
 
     let customerID = req.body.customerID;
     let text = req.body.text;
+    let note = "From Digi-Waiter"
     let restaurantName = req.params.restaurantName;
 
     // 引入 ChatGPT
@@ -126,7 +127,7 @@ exports.postDiagolue = async function(req, res, next) {
         const [changeAmounts, changeFoods] = extractFoods(changePart || "");
 
         if (orderAmounts.length > 0) {
-            createCart(customerID, orderAmounts, orderFoods, restaurantName);
+            createCart(orderAmounts, note, orderFoods, customerID, restaurantName);
         }
 
         if (cancelAmounts.length > 0) {
