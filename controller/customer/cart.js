@@ -10,11 +10,12 @@ exports.postCart = async function(req, res, next) {
     let option = req.body.option;
     let note = req.body.note;
     let food = req.body.food;
+    let category = req.body.category;
     let customerID = req.body.customerID;
     let restaurantName = req.params.restaurantName;
 
     try {
-        let results = await createCartAndCustomize(amount, custom, option, note, food, customerID, restaurantName);
+        let results = await createCartAndCustomize(amount, custom, option, note, food, category, customerID, restaurantName);
         res.send(results);
     } catch(error) {
         res.send(error);

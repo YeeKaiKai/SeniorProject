@@ -7,7 +7,7 @@ const connectionTool = require('../connectionTool.js');
  * @param {Object[]} option 
  * @param {Object[]} price
  */
-module.exports = async function (custom, food, restaurantName) {
+module.exports = async function (custom, food, category, restaurantName) {
 
     const pool = getPool(restaurantName);
     const connection = await connectionTool.getConnection(pool);
@@ -16,10 +16,10 @@ module.exports = async function (custom, food, restaurantName) {
         for (let num = 0; num < custom.length; num++) {
             let insertSql = 
             `
-            INSERT INTO CUSTOMIZE(Custom, Food, RestaurantName)
-            VALUES(?, ?, ?)
+            INSERT INTO CUSTOMIZE(Custom, Food, Category, RestaurantName)
+            VALUES(?, ?, ?, ?)
             `;
-            await connectionTool.query(connection, insertSql, [custom[num], food, restaurantName]);
+            await connectionTool.query(connection, insertSql, [custom[num], food, category, restaurantName]);
         }
         connectionTool.commit(connection);
         connection.release();
