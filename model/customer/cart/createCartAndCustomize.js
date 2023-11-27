@@ -133,7 +133,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     // 插入購物車
                     let insertCartSql = 
                     `
-                    INSERT INTO CART(CustomID, Amount, Note, Food, Category, CustomerID, restaurantName)
+                    INSERT INTO CART(CustomID, Amount, Note, Food, Category, CustomerID, RestaurantName)
                     SELECT
                         (SELECT IFNULL(MAX(CustomID), 0) + 1
                         FROM CART 
