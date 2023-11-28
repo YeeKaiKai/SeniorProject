@@ -1,22 +1,21 @@
-const getPool = require("./connectionDB.js");
+const getPool = require('./connectionDB.js');
 const connectionTool = require('./connectionTool.js');
 
 module.exports = async function (restaurantName) {
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
-    let sql = 
+    let selectSql = 
     `
-    SELECT Food, Description, Quantity, Category, Ingredient, Price
+    SELECT *
     FROM MENU
-    WHERE RestaurantName = ?;
+    WHERE RestaurantName = ?
     `;
     try {
-        let results = await connectionTool.query(connection, sql, [restaurantName]);
+        await connectionTool.query(connection, selectSql, [restaurantName]);
         connection.release();
-        return results;
     } catch(error) {
         connection.release();
         throw error;
     }
-} 
+}
