@@ -87,7 +87,6 @@ exports.postDiagolue = async function(req, res, next) {
         }
     });
     const prompt = await promptGenerate(customerText, customerID, restaurantName);
-    console.log(prompt);
     const chatgptResponse = await api.sendMessage(prompt);    
     let chatgptText = chatgptResponse.text;
     
@@ -129,9 +128,13 @@ exports.getDialogue = async function (req, res, next) {
     let customerID = req.query.customerID;
     let restaurantName = req.params.restaurantName;
 
-    let dialogue = await requireDialogue(customerID, restaurantName);
+    try {
+        let dialogue = await requireDialogue(customerID, restaurantName);
+        res.send(dialogue);
+    } catch(error) {
+        res.send(error);
+    }
 
-    console.log(dialogue);
     res.send(dialogue);
 
 }
