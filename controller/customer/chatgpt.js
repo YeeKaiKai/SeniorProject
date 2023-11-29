@@ -120,7 +120,7 @@ exports.postDiagolue = async function(req, res, next) {
 
     }
     
-    res.status(200).send(chatgptText);
+    res.status(200).send({text: chatgptText});
 }
 
 exports.getDialogue = async function (req, res, next) {
