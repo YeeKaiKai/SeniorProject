@@ -7,7 +7,7 @@ module.exports = async function (customerID, restaurantName) {
     `
     SELECT Content
     FROM DIALOGUE
-    WHERE customerID = ?
+    WHERE CustomerID = ?
     `;
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);

@@ -9,6 +9,8 @@ const updateCart = require("../../model/customer/chatgpt/updateCart.js");
 
 const cartToOrder = require("../../model/customer/cartToOrder.js");
 
+const promptGenerate = require("../../model/promptGenerate.js");
+
 const config = require("../../config/config.js");
 
 const fs = require("fs");
@@ -70,7 +72,7 @@ function extractFoods(str) {
 exports.postDiagolue = async function(req, res, next) {
 
     let customerID = req.body.customerID;
-    let text = req.body.text;
+    let customerText = "顧客：" + req.body.text;
     let note = "From Digi-Waiter"
     let restaurantName = req.params.restaurantName;
 
@@ -81,40 +83,15 @@ exports.postDiagolue = async function(req, res, next) {
         apiKey: config.OPENAI_API_KEY,
         completionParams: {
             model: 'gpt-4',
+            temperature: 0.7
         }
     });
-    
-    let command; // 給予 ChatGPT 的指令
-    fs.readFile(path.join(__dirname, '../../command.txt'), (error, data) => {
-        if (error) {
-            console.log(error);
-        } else {
-            command = data;
-        }
-    })
-
-    let dialogue = await requireDialogue(customerID, restaurantName); // 先前該顧客與 ChatGPT 的對話
-    let menu = await requireMenu(restaurantName); // 店家菜單
-    let cart = await requireCart(restaurantName, customerID);
-    cart = toChinese(cart);
-    menu = toChinese(menu);
-
-    let prompt; // 欲發送給 ChatGPT 的 prompt
-    if (dialogue) {
-        prompt = command + "\n\n菜單內容：" + menu + "\n\n顧客目前訂單內容：" + cart + "\n\n先前對話內容：" + dialogue + text;
-    } else {
-        prompt = command + menu + text;
-    }
+    const prompt = await promptGenerate(customerText, customerID, restaurantName);
+    console.log(prompt);
     const chatgptResponse = await api.sendMessage(prompt);    
-    const chatting = "顧客：" + text + "\n" + "服務生：" + chatgptResponse.text;
-
-    try {
-        createDialogue(customerID, chatting, restaurantName);
-    } catch(err) {
-        console.log(err);
-    }
-
     let chatgptText = chatgptResponse.text;
+    
+    createDialogue(customerID, customerText, chatgptText, restaurantName);
     if (isOrdering(chatgptText)) {
         // 匹配數量和餐點名稱的正則表達式
 
@@ -144,9 +121,7 @@ exports.postDiagolue = async function(req, res, next) {
 
     }
     
-    res.json({
-        text: chatgptResponse.text
-    }).status(200).end();
+    res.status(200).send(chatgptText);
 }
 
 exports.getDialogue = async function (req, res, next) {
@@ -156,8 +131,7 @@ exports.getDialogue = async function (req, res, next) {
 
     let dialogue = await requireDialogue(customerID, restaurantName);
 
-    res.json({
-        text: dialogue
-    });
+    console.log(dialogue);
+    res.send(dialogue);
 
 }
