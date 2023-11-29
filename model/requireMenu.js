@@ -12,8 +12,9 @@ module.exports = async function (restaurantName) {
     WHERE RestaurantName = ?
     `;
     try {
-        await connectionTool.query(connection, selectSql, [restaurantName]);
+        let results = await connectionTool.query(connection, selectSql, [restaurantName]);
         connection.release();
+        return results;
     } catch(error) {
         connection.release();
         throw error;
