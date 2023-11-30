@@ -2,12 +2,13 @@ const getPool = require('../../connectionDB.js');
 const connectionTool = require('../../connectionTool.js');
 
 /**
- * 新增顧客訂單，如果已經有了就會變修改數量。
- * @param {*} customerID 
- * @param {*} quantity 
- * @param {*} food 
- * @param {*} note
- * @param {*} restaurantName
+ * 新增購物車，如果已經有了就會變修改數量。
+ * 
+ * @param {Number} customerID 
+ * @param {Number} quantity 
+ * @param {String} food 
+ * @param {String} note
+ * @param {String} restaurantName
  */
 
 module.exports = async function (customerID, quantity, food, note, restaurantName) {

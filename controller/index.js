@@ -1,5 +1,5 @@
-const requireCustomerID = require("../model/requireCustomerID.js");
-const requireRestaurant = require("../model/requireRestaurant.js");
+const requireCustomerID = require("../model/index/requireCustomerID.js");
+const requireRestaurant = require("../model/index/requireRestaurant.js");
 
 exports.getCustomerID = async function (req, res, next) {
 

@@ -1,6 +1,6 @@
 const createCartAndCustomize = require('../../model/customer/cart/createCartAndCustomize.js');
 const deleteSingleCart = require('../../model/customer/cart/deleteSingleCart.js');
-const requireCart = require('../../model/customer/requireCart.js');
+const requireCart = require('../../model/customer/cart/requireCart.js');
 const updateCartAndCustomize = require('../../model/customer/cart/updateCartAndCustomize.js');
 
 exports.postCart = async function(req, res, next) {
