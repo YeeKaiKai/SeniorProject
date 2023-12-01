@@ -18,12 +18,12 @@ module.exports = async function (customerID, quantity, food, note, restaurantNam
     let sql =
     `
     INSERT INTO \`CART\`(CustomerID, CustomID, Food, Amount, Note, RestaurantName)
-    SELECT ?, (SELECT IFNULL(MAX(CustomID), 0) + 1 FROM CART WHERE CustomerID = ? AND Food = ? AND RestaurantName = ?), ?, ?, ?, ?
+    SELECT ?, (SELECT IFNULL(MAX(CustomID), 0) + 1 FROM CART WHERE CustomerID = ? AND Food = ? AND Note = ? AND RestaurantName = ?), ?, ?, ?, ?
     ON DUPLICATE KEY
     UPDATE Amount = ?
     `;
     try {
-        await connectionTool.query(connection, sql, [customerID, customerID, food, restaurantName, food, quantity, note, restaurantName, quantity]);
+        await connectionTool.query(connection, sql, [customerID, customerID, food, note, restaurantName, food, quantity, note, restaurantName, quantity]);
         connection.release();
     } catch(error) {
         connection.release();

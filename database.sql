@@ -124,11 +124,11 @@ CREATE TABLE CART
   Food VARCHAR(30) NOT NULL,
   Category VARCHAR(20) NOT NULL,
   CustomID INT NOT NULL,
+  Note VARCHAR(100) NOT NULL,
   RestaurantName VARCHAR(30) NOT NULL,
-  Note VARCHAR(100) NULL,
   Confirmed BOOLEAN NOT NULL DEFAULT FALSE,
   OrderID INT NULL,
-  PRIMARY KEY (CustomerID, Food, Category, CustomID, RestaurantName),
+  PRIMARY KEY (CustomerID, Food, Category, CustomID, Note, RestaurantName),
   FOREIGN KEY (CustomerID) REFERENCES CUSTOMER(CustomerID)
   ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (Food, Category, RestaurantName) REFERENCES MENU(Food, Category, RestaurantName)
@@ -141,13 +141,14 @@ CREATE TABLE CART_CUSTOMIZE
 (
   CustomerID INT NOT NULL,
   Food VARCHAR(30) NOT NULL,
-  CustomID INT NOT NULL,
-  Custom VARCHAR(20) NOT NULL,
-  `Option` VARCHAR(20) NOT NULL,
   Category VARCHAR(20) NOT NULL,
+  CustomID INT NOT NULL,
+  Note VARCHAR(100) NOT NULL,
   RestaurantName VARCHAR(30) NOT NULL,
-  PRIMARY KEY (CustomerID, Food, Category, CustomID, RestaurantName, Custom, `Option`),
-  FOREIGN KEY (CustomerID, Food, Category, CustomID, RestaurantName) REFERENCES `CART`(CustomerID, Food, Category, CustomID, RestaurantName)
+  `Option` VARCHAR(20) NOT NULL,
+  Custom VARCHAR(20) NOT NULL,
+  PRIMARY KEY (CustomerID, Food, Category, CustomID, Note, RestaurantName, Custom, `Option`),
+  FOREIGN KEY (CustomerID, Food, Category, CustomID, Note, RestaurantName) REFERENCES `CART`(CustomerID, Food, Category, CustomID, Note, RestaurantName)
   ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (`Option`, Custom, RestaurantName) REFERENCES CUSTOM_OPTION(`Option`, Custom, RestaurantName)
   ON DELETE CASCADE ON UPDATE CASCADE

@@ -44,10 +44,11 @@ module.exports = async function (amount, custom, option, note, food, category, c
         FROM CART
         WHERE RestaurantName = ?
         AND Food = ?
+        AND Note = ?
         AND CustomerID = ?
         AND Confirmed = FALSE
         `;
-        let ifOrdered = await connectionTool.query(connection, checkSql, [restaurantName, food, customerID]);
+        let ifOrdered = await connectionTool.query(connection, checkSql, [restaurantName, food, note, customerID]);
 
         if (ifCustomize[0].count > 0) {
             // 此商品存在客製化
@@ -61,11 +62,13 @@ module.exports = async function (amount, custom, option, note, food, category, c
                 `
                 SELECT COUNT(DISTINCT CustomID) as count 
                 FROM CART_CUSTOMIZE 
+                NATURAL JOIN CART
                 WHERE Food = ? 
+                AND Note = ?
                 AND CustomerID = ? 
                 AND RestaurantName = ?
                 `
-                let customIDCount = await connectionTool.query(connection, customIDSql, [food, customerID, restaurantName]);
+                let customIDCount = await connectionTool.query(connection, customIDSql, [food, note, customerID, restaurantName]);
                 // 存在同樣客製化之CustomID
                 let sameOptionCustomID = null;
                 for (let num = 1; num <= customIDCount[0].count; num++) {
@@ -74,13 +77,16 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     let customizationSql = 
                     `
                     SELECT custom, option
-                    FROM CART_CUSTOMIZE
+                    FROM CART_CUSTOMIZE 
+                    NATURAL JOIN CART
                     WHERE Food = ?
+                    AND Note = ?
                     AND CustomerID = ?
                     AND RestaurantName = ?
                     AND CustomID = ?
+                    AND Confirmed = FALSE
                     `
-                    let customization = await connectionTool.query(connection, customizationSql, [food, customerID, restaurantName, num]);
+                    let customization = await connectionTool.query(connection, customizationSql, [food, note, customerID, restaurantName, num]);
                     for (let customIndex = 0; customIndex < customization.length; customIndex++) {
 
                         // 資料庫的custom在傳入的custom的第幾筆
@@ -101,8 +107,8 @@ module.exports = async function (amount, custom, option, note, food, category, c
                             }
                         }
                     }
-                    if (haveSameCustomize == true) {
-                        // 符合即找到
+                    if (haveSameCustomize == true && customization.length > 0) {
+                        // 符合，且該筆存在客製化
 
                         sameOptionCustomID = num;
                         break;
@@ -111,7 +117,6 @@ module.exports = async function (amount, custom, option, note, food, category, c
 
                 if (sameOptionCustomID != null) {
                     // 購物車存在同樣客製化
-
                     // 更新該購物車數量
                     let updateSql = 
                     `
@@ -121,17 +126,19 @@ module.exports = async function (amount, custom, option, note, food, category, c
                         FROM \`CART\` 
                         WHERE CustomID = ? 
                         AND Food = ? 
+                        AND Note = ?
                         AND Category = ?
                         AND CustomerID = ? 
                         AND RestaurantName = ?
                     ) + ? 
                     WHERE CustomID = ? 
                     AND Food = ?
+                    AND Note = ?
                     AND Category = ?
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                     `
-                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, category, customerID, restaurantName, amount, sameOptionCustomID, food, category, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, note, category, customerID, restaurantName, amount, sameOptionCustomID, food, note, category, customerID, restaurantName]);
                 } else {
                     // 購物車不存在同樣客製化
 
@@ -143,17 +150,19 @@ module.exports = async function (amount, custom, option, note, food, category, c
                         (SELECT IFNULL(MAX(CustomID), 0) + 1
                         FROM CART 
                         WHERE Food = ?
+                        AND Note = ?
                         AND Category = ?
                         AND CustomerID = ?
                         AND restaurantName = ?),
                     ?, ?, ?, ?, ?, ?`;
-                    await connectionTool.query(connection, insertCartSql, [food, category, customerID, restaurantName, amount, note, food, category, customerID, restaurantName]);
+                    await connectionTool.query(connection, insertCartSql, [food, note, category, customerID, restaurantName, amount, note, food, category, customerID, restaurantName]);
                     let insertCustomSql = 
                     `
                     INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Category, Option, Custom, RestaurantName) 
                     SELECT (SELECT MAX(CustomID)
                         FROM CART 
                         WHERE Food = ?
+                        AND Note = ?
                         AND Category = ?
                         AND CustomerID = ?
                         AND restaurantName = ?),
@@ -161,7 +170,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     `;
                     for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                         for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
-                            await connectionTool.query(connection, insertCustomSql, [food, category, customerID, restaurantName, customerID, food, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                            await connectionTool.query(connection, insertCustomSql, [food, note, category, customerID, restaurantName, customerID, food, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
                         }
                     }
                 }
@@ -174,17 +183,19 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     (SELECT IFNULL(MAX(CustomID), 0) + 1
                     FROM CART 
                     WHERE Food = ?
+                    AND Note = ?
                     AND Category = ?
                     AND CustomerID = ?
                     AND restaurantName = ?),
                 ?, ?, ?, ?, ?, ?`;
-                await connectionTool.query(connection, insertCartSql, [food, category, customerID, restaurantName, amount, note, food, category, customerID, restaurantName]);
+                await connectionTool.query(connection, insertCartSql, [food, note, category, customerID, restaurantName, amount, note, food, category, customerID, restaurantName]);
                 let insertCustomSql = 
                 `
                 INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Category, Option, Custom, RestaurantName) 
                 SELECT (SELECT MAX(CustomID)
                     FROM CART 
                     WHERE Food = ?
+                    AND Note = ?
                     AND Category = ?
                     AND CustomerID = ?
                     AND restaurantName = ?),
@@ -192,7 +203,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                 `;
                 for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                     for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
-                        await connectionTool.query(connection, insertCustomSql, [food, category, customerID, restaurantName, customerID, food, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                        await connectionTool.query(connection, insertCustomSql, [food, note, category, customerID, restaurantName, customerID, food, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
                     }
                 }
             }
@@ -209,28 +220,38 @@ module.exports = async function (amount, custom, option, note, food, category, c
                 SET Amount = 
                 (   SELECT Amount 
                     FROM \`CART\` 
-                    WHERE CustomID = 1 
+                    WHERE CustomID = (SELECT CustomID FROM CART WHERE Food = ? AND Note = ? AND Category = ? AND CustomerID = ? AND RestaurantName = ? AND Confirmed = FALSE) 
                     AND Food = ? 
+                    AND Note = ?
                     AND Category = ?
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                 ) + ? 
-                WHERE CustomID = ?
+                WHERE CustomID = (SELECT CustomID FROM CART WHERE Food = ? AND Note = ? AND Category = ? AND CustomerID = ? AND RestaurantName = ? AND Confirmed = FALSE)
                 AND Food = ?
+                AND Note = ?
                 AND Category = ?
                 AND CustomerID = ? 
                 AND RestaurantName = ?
                 `
-                await connectionTool.query(connection, updateSql, [food, category, customerID, restaurantName, amount, 1, food, category, customerID, restaurantName]);
+                await connectionTool.query(connection, updateSql, [food, note, category, customerID, restaurantName, food, note, category, customerID, restaurantName, amount, food, note, category, customerID, restaurantName, food, note, category, customerID, restaurantName]);
             } else {
                 // 此商品不存在購物車
                 // 新增至購物車
                 let insertSql = 
                 `
                 INSERT INTO CART(CustomID, Amount, Note, Food, Category, CustomerID, restaurantName)
-                VALUES(?, ?, ?, ?, ?, ?, ?)
+                SELECT
+                    (SELECT IFNULL(MAX(CustomID), 0) + 1
+                    FROM CART 
+                    WHERE Food = ?
+                    AND Note = ?
+                    AND Category = ?
+                    AND CustomerID = ?
+                    AND restaurantName = ?),
+                ?, ?, ?, ?, ?, ?
                 `;
-                await connectionTool.query(connection, insertSql, [1, amount, note, food, category, customerID, restaurantName]);
+                await connectionTool.query(connection, insertSql, [food, note, category, customerID, restaurantName, amount, note, food, category, customerID, restaurantName]);
             }
         }
 

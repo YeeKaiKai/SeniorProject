@@ -43,11 +43,12 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                     SET Amount = ?, Note = ?
                     WHERE CustomID = ? 
                     AND Food = ?
+                    AND Note = ?
                     AND Category = ?
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                     `
-                    await connectionTool.query(connection, updateSql, [amount, note, customID, food, category, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateSql, [amount, note, customID, food, note, category, customerID, restaurantName]);
             } else {
                 // 有更新客製化
 
@@ -58,10 +59,11 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                 SELECT COUNT(DISTINCT CustomID) as count 
                 FROM CART_CUSTOMIZE 
                 WHERE Food = ? 
+                AND Note = ?
                 AND CustomerID = ? 
                 AND RestaurantName = ?
                 `
-                let customIDCount = await connectionTool.query(connection, customIDSql, [food, customerID, restaurantName]);
+                let customIDCount = await connectionTool.query(connection, customIDSql, [food, note, customerID, restaurantName]);
                 // 存在同樣客製化之CustomID
                 let sameOptionCustomID = null;
                 for (let num = 1; num <= customIDCount[0].count; num++) {
@@ -72,11 +74,12 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                     SELECT custom, option
                     FROM CART_CUSTOMIZE
                     WHERE Food = ?
+                    AND Note = ?
                     AND CustomerID = ?
                     AND RestaurantName = ?
                     AND CustomID = ?
                     `
-                    let customization = await connectionTool.query(connection, customizationSql, [food, customerID, restaurantName, num]);
+                    let customization = await connectionTool.query(connection, customizationSql, [food, note, customerID, restaurantName, num]);
                     for (let customIndex = 0; customIndex < customization.length; customIndex++) {
     
                         // 資料庫的custom在傳入的custom的第幾筆
@@ -119,31 +122,27 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                         FROM \`CART\` 
                         WHERE CustomID = ? 
                         AND Food = ? 
+                        AND Note = ?
                         AND Category = ?
                         AND CustomerID = ? 
                         AND RestaurantName = ?
                     ) + ? 
                     WHERE CustomID = ? 
                     AND Food = ?
+                    AND Note = ?
                     AND Category = ?
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                     `
-                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, category, customerID, restaurantName, amount, sameOptionCustomID, food, category, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, note, category, customerID, restaurantName, amount, sameOptionCustomID, food, note, category, customerID, restaurantName]);
     
                     // 將原購物車數量減至0(刪除)
                     let deleteSql = 
                     `
-                    DELETE FROM CART_CUSTOMIZE
-                    WHERE CustomerID = ? AND CustomID = ? AND Food = ? AND RestaurantName = ?
-                    `;
-                    await connectionTool.query(connection, deleteSql, [customerID, customID, food, restaurantName]);
-                    deleteSql = 
-                    `
                     DELETE FROM CART
-                    WHERE CustomerID = ? AND CustomID = ? AND Food = ? AND Category = ? AND RestaurantName = ?
+                    WHERE CustomerID = ? AND CustomID = ? AND Food = ? AND Note = ? AND Category = ? AND RestaurantName = ?
                     `;
-                    await connectionTool.query(connection, deleteSql, [customerID, customID, food, category, restaurantName]);
+                    await connectionTool.query(connection, deleteSql, [customerID, customID, food, note, category, restaurantName]);
     
                 } else {
                     // 購物車不存在同樣客製化
@@ -153,18 +152,18 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
                     `
                     UPDATE CART 
                     SET Amount = ?, Note = ?
-                    WHERE CustomID = ? AND Food= ? AND Category = ? AND CustomerID = ? AND RestaurantName = ?
+                    WHERE CustomID = ? AND Food= ? AND Note = ? AND Category = ? AND CustomerID = ? AND RestaurantName = ?
                     `;
-                    await connectionTool.query(connection, updateCartSql, [amount, note, customID, food, category, customerID, restaurantName]);
+                    await connectionTool.query(connection, updateCartSql, [amount, note, customID, food, note, category, customerID, restaurantName]);
                     let updateCustomSql = 
                     `
                     UPDATE CART_CUSTOMIZE
                     SET Custom = ?, \`Option\` = ?
-                    WHERE CustomerID = ? AND Food = ? AND CustomID = ? AND RestaurantName = ? AND Custom = ? AND Option = ?
+                    WHERE CustomerID = ? AND Food = ? AND Note = ? AND CustomID = ? AND RestaurantName = ? AND Custom = ? AND Option = ?
                     `;
                     for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                         for (let optionIndex = 0; optionIndex < newOption[customIndex].length; optionIndex++) {
-                            await connectionTool.query(connection, updateCustomSql, [custom[customIndex], newOption[customIndex][optionIndex], customerID, food, customID, restaurantName, custom[customIndex], oldOption[customIndex][optionIndex]]);
+                            await connectionTool.query(connection, updateCustomSql, [custom[customIndex], newOption[customIndex][optionIndex], customerID, food, note, customID, restaurantName, custom[customIndex], oldOption[customIndex][optionIndex]]);
                         }
                     }
                 }
@@ -180,11 +179,12 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
             SET Amount = ? 
             WHERE CustomID = 1 
             AND Food = ?
+            AND Note = ?
             AND Category = ?
             AND CustomerID = ? 
             AND RestaurantName = ?
             `
-            await connectionTool.query(connection, updateSql, [amount, food, category, customerID, restaurantName]);
+            await connectionTool.query(connection, updateSql, [amount, food, note, category, customerID, restaurantName]);
         }
 
         await connectionTool.commit(connection);
