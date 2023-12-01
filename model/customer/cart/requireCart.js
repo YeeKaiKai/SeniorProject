@@ -17,7 +17,7 @@ module.exports = async function (restaurantName, customerID) {
     INNER JOIN MENU m ON c.Food = m.Food 
     AND c.RestaurantName = m.RestaurantName
     WHERE c.restaurantName = ? AND c.customerID = ? AND c.Confirmed = FALSE
-    ORDER BY c.Food, c.CustomID, cc.Custom ASC
+    ORDER BY c.Food, c.CustomID, c.Note, cc.Custom ASC
     `;
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
