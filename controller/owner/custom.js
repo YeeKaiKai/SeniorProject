@@ -13,8 +13,8 @@ exports.postCustom = async function(req, res, next) {
     let restaurantName = req.params.restaurantName;
 
     try {
-        let result = await createCustom(custom, minOption, maxOption, option, optionPrice, restaurantName);
-        res.send(result);
+        await createCustom(custom, minOption, maxOption, option, optionPrice, restaurantName);
+        res.status(200).send();
     } catch(error) {
         throw (500);
     }
@@ -28,8 +28,8 @@ exports.deleteCustom = async function(req, res, next) {
     let restaurantName = req.params.restaurantName;
 
     try {
-        let result = await deleteCustom(custom, option, restaurantName);
-        res.send(result);
+        await deleteCustom(custom, option, restaurantName);
+        res.status(200).send();
     } catch(error) {
         throw (500);
     }
@@ -61,7 +61,7 @@ exports.patchCustom = async function(req, res, next) {
     let restaurantName = req.params.restaurantName;
 
     try {
-        let result = await updateCustom(oldCustom, newCustom, minOption, maxOption, oldOption, newOption, optionPrice, restaurantName);
+        await updateCustom(oldCustom, newCustom, minOption, maxOption, oldOption, newOption, optionPrice, restaurantName);
         res.send(result);
     } catch(error) {
         throw (error);
