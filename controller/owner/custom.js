@@ -16,7 +16,7 @@ exports.postCustom = async function(req, res, next) {
         await createCustom(custom, minOption, maxOption, option, optionPrice, restaurantName);
         res.status(200).send();
     } catch(error) {
-        throw (500);
+        throw (error);
     }
 
 }
@@ -31,7 +31,7 @@ exports.deleteCustom = async function(req, res, next) {
         await deleteCustom(custom, option, restaurantName);
         res.status(200).send();
     } catch(error) {
-        throw (500);
+        throw (error);
     }
 
 }
@@ -44,7 +44,7 @@ exports.getCustom = async function(req, res, next) {
         let result = await requireCustom(restaurantName);
         res.send(result);
     } catch(error) {
-        throw (500);
+        throw (error);
     }
 
 }
