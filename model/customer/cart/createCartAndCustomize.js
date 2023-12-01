@@ -166,7 +166,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                         AND Category = ?
                         AND CustomerID = ?
                         AND restaurantName = ?),
-                    ?, ?, ?, ?, ?, ?
+                    ?, ?, ?, ?, ?, ?, ?
                     `;
                     for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                         for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
@@ -199,7 +199,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     AND Category = ?
                     AND CustomerID = ?
                     AND restaurantName = ?),
-                ?, ?, ?, ?, ?, ?
+                ?, ?, ?, ?, ?, ?, ?
                 `;
                 for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                     for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
