@@ -158,7 +158,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     await connectionTool.query(connection, insertCartSql, [food, note, category, customerID, restaurantName, amount, note, food, category, customerID, restaurantName]);
                     let insertCustomSql = 
                     `
-                    INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Category, Option, Custom, RestaurantName) 
+                    INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Note, Category, Option, Custom, RestaurantName) 
                     SELECT (SELECT MAX(CustomID)
                         FROM CART 
                         WHERE Food = ?
@@ -170,7 +170,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     `;
                     for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                         for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
-                            await connectionTool.query(connection, insertCustomSql, [food, note, category, customerID, restaurantName, customerID, food, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                            await connectionTool.query(connection, insertCustomSql, [food, note, category, customerID, restaurantName, customerID, food, note, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
                         }
                     }
                 }
@@ -191,7 +191,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                 await connectionTool.query(connection, insertCartSql, [food, note, category, customerID, restaurantName, amount, note, food, category, customerID, restaurantName]);
                 let insertCustomSql = 
                 `
-                INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Category, Option, Custom, RestaurantName) 
+                INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Note, Category, Option, Custom, RestaurantName) 
                 SELECT (SELECT MAX(CustomID)
                     FROM CART 
                     WHERE Food = ?
@@ -203,7 +203,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                 `;
                 for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                     for (let optionIndex = 0; optionIndex < option[customIndex].length; optionIndex++) {
-                        await connectionTool.query(connection, insertCustomSql, [food, note, category, customerID, restaurantName, customerID, food, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
+                        await connectionTool.query(connection, insertCustomSql, [food, note, category, customerID, restaurantName, customerID, food, note, category, option[customIndex][optionIndex], custom[customIndex], restaurantName]);
                     }
                 }
             }
