@@ -177,14 +177,14 @@ module.exports = async function (amount, custom, oldOption, newOption, note, foo
             `
             UPDATE \`CART\` 
             SET Amount = ? 
-            WHERE CustomID = 1 
+            WHERE CustomID = ?
             AND Food = ?
             AND Note = ?
             AND Category = ?
             AND CustomerID = ? 
             AND RestaurantName = ?
             `
-            await connectionTool.query(connection, updateSql, [amount, food, note, category, customerID, restaurantName]);
+            await connectionTool.query(connection, updateSql, [amount, customID, food, note, category, customerID, restaurantName]);
         }
 
         await connectionTool.commit(connection);
