@@ -31,5 +31,7 @@ router.get('/:restaurantName/menu', menu.getMenu);
 router.patch('/:restaurantName/category', category.patchCategory);
 router.patch('/:restaurantName/custom', custom.patchCustom);
 router.patch('/:restaurantName/menu', menu.patchMenu);
+router.patch('/:restaurantName/order/paid', order.patchPaid);
+
 
 module.exports = router;
