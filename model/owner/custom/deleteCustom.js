@@ -9,17 +9,11 @@ const connectionTool = require('../../connectionTool.js');
  * @param {String} option 
  * @param {String} restaurantName 
  */
-module.exports = async function (custom, option, restaurantName) {
+module.exports = async function (custom, restaurantName) {
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
 
-    let deleteOptionSql = 
-    `
-    DELETE FROM CUSTOM_OPTION
-    WHERE Option = ?
-    AND RestaurantName = ?
-    `;
     let deleteCustomSql = 
     `
     DELETE FROM FOOD_CUSTOM
@@ -28,10 +22,6 @@ module.exports = async function (custom, option, restaurantName) {
     `;
 
     try {
-        await connectionTool.beginTransaction(connection);
-        for (let num = 0; num < option.length; num++) {
-            await connectionTool.query(connection, deleteOptionSql, [custom, option[num], restaurantName]);
-        }
         await connectionTool.query(connection, deleteCustomSql, [custom, restaurantName]);
         connection.release();
     } catch(error) {

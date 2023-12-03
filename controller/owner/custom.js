@@ -1,5 +1,6 @@
 const createCustom = require('../../model/owner/custom/createCustom.js');
 const deleteCustom = require('../../model/owner/custom/deleteCustom.js');
+const deleteOption = require('../../model/owner/custom/deleteOption.js');
 const requireCustom = require('../../model/owner/custom/requireCustom.js');
 const updateCustom = require('../../model/owner/custom/updateCustom.js');
 
@@ -24,11 +25,10 @@ exports.postCustom = async function(req, res, next) {
 exports.deleteCustom = async function(req, res, next) {
 
     let custom = req.body.custom;
-    let option = req.body.option;
     let restaurantName = req.params.restaurantName;
 
     try {
-        await deleteCustom(custom, option, restaurantName);
+        await deleteCustom(custom, restaurantName);
         res.status(200).send();
     } catch(error) {
         throw (error);
