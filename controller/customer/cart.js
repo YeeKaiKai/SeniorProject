@@ -15,10 +15,10 @@ exports.postCart = async function(req, res, next) {
     let restaurantName = req.params.restaurantName;
 
     try {
-        let results = await createCartAndCustomize(amount, custom, option, note, food, category, customerID, restaurantName);
-        res.send(results);
+        await createCartAndCustomize(amount, custom, option, note, food, category, customerID, restaurantName);
+        res.status(200).send();
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 }
 
@@ -31,7 +31,7 @@ exports.getCart = async function(req, res, next) {
         let results = await requireCart(restaurantName, customerID);
         res.send(results);
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }
@@ -51,8 +51,9 @@ exports.patchCart = async function(req, res, next) {
 
     try { 
         await updateCartAndCustomize(amount, custom, oldOption, newOption, note, food, category, customerID, customID, restaurantName);
+        res.status(200).send();
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }
@@ -68,8 +69,9 @@ exports.deleteCart = async function(req, res, next) {
 
     try {
         await deleteSingleCart(customID, customerID, food, note, category, restaurantName);
+        res.status(200).send();
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
     
 }

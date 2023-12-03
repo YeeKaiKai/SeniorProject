@@ -9,7 +9,7 @@ exports.getCategory = async function (req, res, next) {
         let results = await requireCategory(restaurantName);
         res.send(results);
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }
@@ -22,7 +22,7 @@ exports.getMenu = async function (req, res, next) {
         let results = await requireMenu(restaurantName);
         res.send(results);
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }

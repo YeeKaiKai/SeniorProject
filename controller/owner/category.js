@@ -8,10 +8,10 @@ exports.postCategory = async function(req, res, next) {
     try {
         let restaurantName = req.params.restaurantName;
         let category = req.body.category;
-        let results = await createCategory(category, restaurantName);
-        res.send(results);
+        await createCategory(category, restaurantName);
+        res.status(200).send();
     } catch (error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }
@@ -23,7 +23,7 @@ exports.getCategory = async function(req, res, next) {
         let results = await requireCategory(restaurantName);
         res.send(results);
     } catch (error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }
@@ -35,9 +35,9 @@ exports.patchCategory = async function(req, res, next) {
         let newCategory = req.body.newCategory;
         let oldCategory = req.body.oldCategory;
         await updateCategory(newCategory, oldCategory, restaurantName);
-        res.send();
+        res.status(200).send();
     } catch (error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 }
 
@@ -47,8 +47,8 @@ exports.deleteCategory = async function(req, res, next) {
         let restaurantName = req.params.restaurantName;
         let category = req.body.category;
         await deleteCategory(category, restaurantName);
-        res.send();
+        res.status(200).send();
     } catch (error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 }

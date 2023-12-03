@@ -129,9 +129,7 @@ exports.getDialogue = async function (req, res, next) {
         let dialogue = await requireDialogue(customerID, restaurantName);
         res.send(dialogue);
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
-
-    res.send(dialogue);
 
 }

@@ -16,10 +16,10 @@ exports.postCartToOrder = async function(req, res, next) {
         let tableNumber = req.body.tableNumber;
         let phoneNumber = req.body.phoneNumber;
 
-        let results = await cartToOrder(customerID, totalSum, restaurantName, orderNote, orderDate, orderTime, forHere, tableNumber, phoneNumber);
-        res.send(results);
+        await cartToOrder(customerID, totalSum, restaurantName, orderNote, orderDate, orderTime, forHere, tableNumber, phoneNumber);
+        res.status(200).send();
     } catch (error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }
@@ -33,7 +33,7 @@ exports.getOrder = async function(req, res, next) {
         let results = await requireOrder(restaurantName, customerID);
         res.send(results);
     } catch (error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 
 }

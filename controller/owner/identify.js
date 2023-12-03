@@ -13,6 +13,6 @@ exports.postRegist = async function(req, res, next) {
         let enPassword = bcrypt.hashSync(password, 10);
         await registRestaurant(restaurantName, restaurantName_zh_tw, email, enPassword, businessHours, tel);
     } catch(error) {
-        res.send(error);
+        res.status(500).send(error);
     }
 }
