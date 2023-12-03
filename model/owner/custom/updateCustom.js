@@ -18,29 +18,28 @@ module.exports = async function (oldCustom, newCustom, minOption, maxOption, old
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
-    let updateCustomSql =
+    let deleteCustomSql =
     `
-    UPDATE FOOD_CUSTOM
-    SET Custom = ?,
-    MinOption = ?,
-    MaxOption = ?
+    DELETE FROM FOOD_CUSTOM
     WHERE Custom = ?
     AND RestaurantName = ?
     `;
-    let updateOptionSql = 
+    let insertCustomSql = 
     `
-    UPDATE CUSTOM_OPTION
-    SET Option = ?,
-    OptionPrice = ?
-    WHERE Custom = ?
-    AND Option = ?
-    AND RestaurantName = ?
+    INSERT INTO FOOD_CUSTOM(Custom, RestaurantName, MinOption, MaxOption)
+    VALUES(?, ?, ?, ?);
+    `;
+    let insertOptionSql = 
     `
+    INSERT INTO CUSTOM_OPTION(Custom, \`Option\`, OptionPrice, RestaurantName)
+    VALUES(?, ?, ?, ?);
+    `;
     try {
         await connectionTool.beginTransaction(connection);
-        await connectionTool.query(connection, updateCustomSql, [newCustom, minOption, maxOption, oldCustom, restaurantName]);
+        await connectionTool.query(connection, deleteCustomSql, [oldCustom, restaurantName]);
+        await connectionTool.query(connection, insertCustomSql, [newCustom, restaurantName, minOption, maxOption]);
         for (let num = 0; num < newOption.length; num++) {
-            await connectionTool.query(connection, updateOptionSql, [newOption[num], optionPrice[num], oldOption[num], oldCustom, oldOption[num], restaurantName]);
+            await connectionTool.query(connection, insertOptionSql, [newCustom, newOption[num], optionPrice[num], restaurantName]);
         }
         await connectionTool.commit(connection);
         connection.release();
