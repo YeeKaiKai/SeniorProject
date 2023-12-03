@@ -1,6 +1,6 @@
 const createCategory = require('../../model/owner/category/createCategory.js');
 const deleteCategory = require('../../model/owner/category/deleteCategory.js');
-const requireCategory = require('../../model/owner/category/requireCategory.js');
+const requireCategory = require('../../model/requireCategory.js');
 const updateCategory = require('../../model/owner/category/updateCategory.js');
 
 exports.postCategory = async function(req, res, next) {

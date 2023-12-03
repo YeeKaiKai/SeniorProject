@@ -7,12 +7,12 @@ module.exports = async function (restaurantName) {
     const connection = await connectionTool.getConnection(pool);
     let selectSql = 
     `
-    SELECT DISTINCT Category
-    FROM MENU
-    WHERE RestaurantName = ?;
+    SELECT *
+    FROM MENU_CATEGORY
+    WHERE RestaurantName = ?
     `;
     try {
-        let results = await connectionTool.query(connection, selectSql, [restaurantName]);
+        const results = await connectionTool.query(connection, selectSql, [restaurantName]);
         connection.release();
         return results;
     } catch(error) {
