@@ -27,7 +27,7 @@ module.exports = async function (customerID, customerText, gptText, restaurantNa
         await connectionTool.commit(connection);
         connection.release();
     } catch(error) {
-        await connectionTool.rollback();
+        await connectionTool.rollback(connection);
         connection.release();
         throw error;
     }
