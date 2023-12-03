@@ -1,7 +1,7 @@
 const getPool = require('../../connectionDB.js');
 const connectionTool = require('../../connectionTool.js');
 
-module.exports = async function (food, description, defaultQuantity, quantity, ingredient, price, category, custom, restaurantName) {
+module.exports = async function (food, description, defaultQuantity, ingredient, price, category, custom, restaurantName) {
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
@@ -17,7 +17,7 @@ module.exports = async function (food, description, defaultQuantity, quantity, i
     `;
     try {
         await connectionTool.beginTransaction(connection);
-        await connectionTool.query(connection, insertMenuSql, [food, description, defaultQuantity, quantity, ingredient, price, category, restaurantName]);
+        await connectionTool.query(connection, insertMenuSql, [food, description, defaultQuantity, defaultQuantity, ingredient, price, category, restaurantName]);
         if (custom != null) {
             for (let num = 0; num < custom.length; num++) {
                 await connectionTool.query(connection, customToFoodSql, [custom[num], food, category, restaurantName]);

@@ -9,13 +9,12 @@ exports.postMenu = async function(req, res, next) {
         let food = req.body.food;
         let description = req.body.description;
         let defaultQuantity = req.body.defaultQuantity;
-        let quantity = req.body.quantity;
         let ingredient = req.body.ingredient;
         let price = req.body.price;
         let category = req.body.category;
         let custom = req.body.custom;
         let restaurantName = req.params.restaurantName;
-        await createMenuAndToCustom(food, description, defaultQuantity, quantity, ingredient, price, category, custom, restaurantName);
+        await createMenuAndToCustom(food, description, defaultQuantity, ingredient, price, category, custom, restaurantName);
         res.status(204).send();
     } catch (error) {
         res.status(500).send(error);
