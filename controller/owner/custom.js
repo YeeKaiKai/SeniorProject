@@ -1,6 +1,5 @@
 const createCustom = require('../../model/owner/custom/createCustom.js');
 const deleteCustom = require('../../model/owner/custom/deleteCustom.js');
-const deleteOption = require('../../model/owner/custom/deleteOption.js');
 const requireCustom = require('../../model/owner/custom/requireCustom.js');
 const updateCustom = require('../../model/owner/custom/updateCustom.js');
 
