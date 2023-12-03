@@ -5,16 +5,10 @@ module.exports = async function (food, description, quantity, ingredient, price,
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
-    let updateMenuSql = 
+    let insertMenuSql = 
     `
-    UPDATE MENU
-    SET Food = ? AND Description = ? AND Quantity = ? AND Ingredient = ? AND Price = ?
-    WHERE Food = ? AND Category = ? AND RestaurantName = ?
-    `;
-    let deleteCustomSql = 
-    `
-    DELETE FROM CUSTOMIZE
-    WHERE Food = ? AND Category = ? AND RestaurantName = ?
+    INSERT INTO MENU(Food, Description, Quantity, Ingredient, Price, Category, RestaurantName)
+    VALUES(?, ?, ?, ?, ?, ?, ?)
     `;
     let customToFoodSql = 
     `
@@ -22,18 +16,17 @@ module.exports = async function (food, description, quantity, ingredient, price,
     VALUES(?, ?, ?, ?)
     `;
     try {
-        connectionTool.beginTransaction(connection);
-        await connectionTool.query(connection, updateMenuSql, [food, description, quantity, ingredient, price, food, category, restaurantName]);
-        await connectionTool.query(connection, deleteCustomSql, [food, category, restaurantName]);
+        await connectionTool.beginTransaction(connection);
+        await connectionTool.query(connection, insertMenuSql, [food, description, quantity, ingredient, price, category, restaurantName]);
         if (custom != null) {
             for (let num = 0; num < custom.length; num++) {
                 await connectionTool.query(connection, customToFoodSql, [custom[num], food, category, restaurantName]);
             }
         }
-        connectionTool.commit(connection);
+        await connectionTool.commit(connection);
         connection.release();
     } catch(error) {
-        connectionTool.rollback(connection);
+        await connectionTool.rollback(connection);
         connection.release();
         throw error;
     }
