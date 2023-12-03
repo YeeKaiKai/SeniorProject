@@ -34,6 +34,7 @@ CREATE TABLE MENU
 (
   Food VARCHAR(30) NOT NULL,
   Description VARCHAR(100) NOT NULL,
+  DefaultQuantity INT NOT NULL,
   Quantity INT NOT NULL,
   Ingredient VARCHAR(100) NOT NULL,
   Price INT NOT NULL,

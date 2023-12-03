@@ -1,14 +1,14 @@
 const getPool = require('../../connectionDB.js');
 const connectionTool = require('../../connectionTool.js');
 
-module.exports = async function (food, description, quantity, ingredient, price, category, custom, restaurantName) {
+module.exports = async function (food, description, defaultQuantity, quantity, ingredient, price, category, custom, restaurantName) {
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
     let updateMenuSql = 
     `
     UPDATE MENU
-    SET Food = ? AND Description = ? AND Quantity = ? AND Ingredient = ? AND Price = ?
+    SET Food = ? AND Description = ? AND DefaultQuantity = ? AND Quantity = ? AND Ingredient = ? AND Price = ?
     WHERE Food = ? AND Category = ? AND RestaurantName = ?
     `;
     let deleteCustomSql = 
