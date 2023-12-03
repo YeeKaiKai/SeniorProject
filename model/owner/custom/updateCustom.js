@@ -39,7 +39,7 @@ module.exports = async function (oldCustom, newCustom, minOption, maxOption, old
     try {
         await connectionTool.beginTransaction(connection);
         await connectionTool.query(connection, updateCustomSql, [newCustom, minOption, maxOption, oldCustom, restaurantName]);
-        for (let num = 0; num < option.length; num++) {
+        for (let num = 0; num < newOption.length; num++) {
             await connectionTool.query(connection, updateOptionSql, [newOption[num], optionPrice[num], oldOption[num], oldCustom, oldOption[num], restaurantName]);
         }
         await connectionTool.commit(connection);
