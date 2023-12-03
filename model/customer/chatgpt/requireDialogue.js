@@ -8,22 +8,14 @@ module.exports = async function (customerID, restaurantName) {
     SELECT Content
     FROM DIALOGUE
     WHERE CustomerID = ?
+    AND RestaurantName = ?
     `;
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
     try {
-        const results = await connectionTool.query(connection, sql, [customerID]);
-        let text = "";
-        // 只取最近五次的對話紀錄
-        if (results.length !== 0) {
-            let start = (results.length - 5) >= 0 ? results.length - 5 : 0;
-            let end = (results.length - 5) >= 0 ? 5 : results.length;
-            for (let i = 0; i < end; i++) {
-                text = text + results[start + i].Content + "\n";
-            }
-        }
+        const results = await connectionTool.query(connection, sql, [customerID, restaurantName]);
         connection.release();
-        return text;
+        return results;
     } catch(error) {
         connection.release();
         throw error;
