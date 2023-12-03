@@ -32,6 +32,7 @@ router.patch('/:restaurantName/category', category.patchCategory);
 router.patch('/:restaurantName/custom', custom.patchCustom);
 router.patch('/:restaurantName/menu', menu.patchMenu);
 router.patch('/:restaurantName/order/paid', order.patchPaid);
+router.patch('/:restaurantName/order/ownerNote', order.patchOwnerNote);
 
 
 module.exports = router;
