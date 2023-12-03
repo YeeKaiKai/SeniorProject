@@ -16,7 +16,7 @@ exports.postMenu = async function(req, res, next) {
         let custom = req.body.custom;
         let restaurantName = req.params.restaurantName;
         await createMenuAndToCustom(food, description, defaultQuantity, quantity, ingredient, price, category, custom, restaurantName);
-        res.status(200).send();
+        res.status(204).send();
     } catch (error) {
         res.status(500).send(error);
     }
@@ -36,7 +36,7 @@ exports.patchMenu = async function(req, res, next) {
         let custom = req.body.custom;
         let restaurantName = req.params.restaurantName;
         await updateMenu(food, description, defaultQuantity, quantity, ingredient, price, food, category, custom, restaurantName);
-        res.status(200).send();
+        res.status(204).send();
     } catch (error) {
         res.status(500).send(error);
     }
@@ -62,7 +62,7 @@ exports.deleteMenu = async function(req, res, next) {
         let category = req.query.category;
         let restaurantName = req.params.restaurantName;
         await deleteMenu(food, category, restaurantName);
-        res.status(200).send();
+        res.status(204).send();
     } catch (error) {
         res.status(500).send(error);
     }

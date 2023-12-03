@@ -17,7 +17,7 @@ exports.postCartToOrder = async function(req, res, next) {
         let phoneNumber = req.body.phoneNumber;
 
         await cartToOrder(customerID, totalSum, restaurantName, orderNote, orderDate, orderTime, forHere, tableNumber, phoneNumber);
-        res.status(200).send();
+        res.status(204).send();
     } catch (error) {
         res.status(500).send(error);
     }
@@ -31,7 +31,7 @@ exports.getOrder = async function(req, res, next) {
         let restaurantName = req.params.restaurantName;
         
         let results = await requireOrder(restaurantName, customerID);
-        res.send(results);
+        res.status(200).send(results);
     } catch (error) {
         res.status(500).send(error);
     }

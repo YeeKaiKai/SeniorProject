@@ -7,7 +7,7 @@ exports.getCustomizeOption = async function(req, res, next) {
 
     try {
         let results = await requireCustomizeOption(restaurantName, food);
-        res.send(results);
+        res.status(200).send(results);
     } catch(error) {
         res.status(500).send(error);
     }

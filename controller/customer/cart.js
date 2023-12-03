@@ -16,7 +16,7 @@ exports.postCart = async function(req, res, next) {
 
     try {
         await createCartAndCustomize(amount, custom, option, note, food, category, customerID, restaurantName);
-        res.status(200).send();
+        res.status(204).send();
     } catch(error) {
         res.status(500).send(error);
     }
@@ -29,7 +29,7 @@ exports.getCart = async function(req, res, next) {
 
     try {
         let results = await requireCart(restaurantName, customerID);
-        res.send(results);
+        res.status(200).send(results);
     } catch(error) {
         res.status(500).send(error);
     }
@@ -42,7 +42,8 @@ exports.patchCart = async function(req, res, next) {
     let custom = req.body.custom;
     let oldOption = req.body.oldOption;
     let newOption = req.body.newOption;
-    let note = req.body.note;
+    let oldNote = req.body.oldNote;
+    let newNote = req.body.newNote;
     let food = req.body.food;
     let category = req.body.category;
     let customerID = req.body.customerID;
@@ -50,8 +51,8 @@ exports.patchCart = async function(req, res, next) {
     let customID = req.body.customID;
 
     try { 
-        await updateCartAndCustomize(amount, custom, oldOption, newOption, note, food, category, customerID, customID, restaurantName);
-        res.status(200).send();
+        await updateCartAndCustomize(amount, custom, oldOption, newOption, oldNote, newNote, food, category, customerID, customID, restaurantName);
+        res.status(204).send();
     } catch(error) {
         res.status(500).send(error);
     }
@@ -69,7 +70,7 @@ exports.deleteCart = async function(req, res, next) {
 
     try {
         await deleteSingleCart(customID, customerID, food, note, category, restaurantName);
-        res.status(200).send();
+        res.status(204).send();
     } catch(error) {
         res.status(500).send(error);
     }
