@@ -10,7 +10,7 @@ module.exports = async function(text, customerID, restaurantName) {
 
     let prompt;
 
-    fs.readFile(path.join(__dirname, '../command.txt'), (error, data) => {
+    fs.readFile(path.join(__dirname, '../../../command.txt'), (error, data) => {
         if (error) {
             throw error;
         } else {
