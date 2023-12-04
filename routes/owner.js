@@ -25,6 +25,7 @@ router.get('/:restaurantName/category', category.getCategory);
 router.get('/:restaurantName/category', category.getCategory);
 router.get('/:restaurantName/custom', custom.getCustom);
 router.get('/:restaurantName/order', order.getOrder);
+router.get('/:restaurantName/menu', menu.getMenu);
 router.get('/:restaurantName', restaurant.getRestaurantInfo);
 
 router.patch('/:restaurantName/category', category.patchCategory);
