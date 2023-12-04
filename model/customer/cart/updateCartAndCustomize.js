@@ -3,7 +3,11 @@ const connectionTool = require('../../connectionTool.js');
 const _ = require('lodash');
 
 /**
- * 更新購物車，如果沒有相同的就直接更改客製化或數量，若存在相同的，直接更新到該筆購物車，並刪除原本的
+ * 
+ * 更新購物車，如果沒有相同的就直接更改客製化或數量
+ * 
+ * 若存在相同的，直接更新到該筆購物車，並刪除原本的
+ * 
  * @param {*} amount 
  * @param {*} custom 
  * @param {*} oldOption 
@@ -165,7 +169,7 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                     let insertCustomSql = 
                     `
                     INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Note, Category, Option, Custom, RestaurantName) 
-                    VALUES ?, ?, ?, ?, ?, ?, ?, ?
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     `;
                     for (let customIndex = 0; customIndex < custom.length; customIndex++) {
                         for (let optionIndex = 0; optionIndex < newOption[customIndex].length; optionIndex++) {
