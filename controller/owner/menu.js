@@ -34,7 +34,7 @@ exports.patchMenu = async function(req, res, next) {
         let category = req.body.category;
         let custom = req.body.custom;
         let restaurantName = req.params.restaurantName;
-        await updateMenu(food, description, defaultQuantity, quantity, ingredient, price, food, category, custom, restaurantName);
+        await updateMenu(food, description, defaultQuantity, quantity, ingredient, price, category, custom, restaurantName);
         res.status(204).send();
     } catch (error) {
         res.status(500).send(error);
