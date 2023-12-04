@@ -8,7 +8,8 @@ module.exports = async function (restaurantName) {
     let selectSql = 
     `
     SELECT *
-    FROM MENU
+    FROM MENU 
+    NATURAL JOIN CUSTOMIZE
     WHERE RestaurantName = ?
     `;
     try {
