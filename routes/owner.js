@@ -3,7 +3,6 @@ var router = express.Router();
 
 const order = require('../controller/owner/order.js');
 const custom = require('../controller/owner/custom.js');
-const identify = require('../controller/owner/identify.js');
 const category = require('../controller/owner/category.js');
 const menu = require('../controller/owner/menu.js');
 
@@ -11,8 +10,6 @@ const menu = require('../controller/owner/menu.js');
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
-
-router.post('/:restaurantName/regist', identify.postRegist);
 
 router.post('/:restaurantName/category', category.postCategory);
 router.post('/:restaurantName/custom', custom.postCustom);
