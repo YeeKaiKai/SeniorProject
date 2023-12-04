@@ -13,7 +13,7 @@ module.exports = async function (restaurantName) {
     ON M.Food = C.Food 
     AND M.Category = C.Category 
     AND M.RestaurantName = C.RestaurantName
-    WHERE RestaurantName = ?
+    WHERE M.RestaurantName = ?
     `;
     try {
         let results = await connectionTool.query(connection, selectSql, [restaurantName]);
