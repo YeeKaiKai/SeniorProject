@@ -8,6 +8,5 @@ router.post('/login', index.postLoginRestaurant);
 
 router.get('/', index.getCustomerID)
 router.get('/restaurant', index.getRestaurant)
-router.get('/:restaurantName/category', menu.getCategory);
 
 module.exports = router;

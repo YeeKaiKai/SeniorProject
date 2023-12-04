@@ -22,6 +22,7 @@ router.get('/:restaurantName/chat', chatgpt.getDialogue);
 router.get('/:restaurantName/order', order.getOrder);
 router.get('/:restaurantName/cart', cart.getCart);
 router.get('/:restaurantName/menu', menu.getMenu);
+router.get('/:restaurantName/category', menu.getCategory);
 router.get('/:restaurantName/:food/customize', custom.getCustomizeOption);
 
 router.patch('/:restaurantName/cart', cart.patchCart);
