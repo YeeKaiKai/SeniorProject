@@ -79,8 +79,7 @@ exports.postDiagolue = async function(req, res, next) {
     const api = new ChatGPTAPI({
         apiKey: config.OPENAI_API_KEY,
         completionParams: {
-            model: 'gpt-4',
-            temperature: 0.7
+            model: 'gpt-4-1106-preview',
         }
     });
     const prompt = await promptGenerate(customerText, customerID, restaurantName);
