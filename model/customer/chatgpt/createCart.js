@@ -2,13 +2,17 @@ const getPool = require('../../connectionDB.js');
 const connectionTool = require('../../connectionTool.js');
 
 /**
+ * 
  * 藉由 ChatGPT 新增購物車
+ * 
  * 如果沒有客製化，會直接新增至購物車，需手動點選客製化
+ * 
  * 如果有客製化，判斷該餐點有無存在，有則更新數量，無則新增
- * @param {*} customerID 
- * @param {*} quantity 
- * @param {*} food 
- * @param {*} restaurantName
+ * 
+ * @param {Number} customerID 
+ * @param {Number[]} quantity 
+ * @param {String[]} food 
+ * @param {String} restaurantName
  */
 
 module.exports = async function (amount, note, food, customerID, restaurantName) {

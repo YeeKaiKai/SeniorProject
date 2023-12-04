@@ -1,6 +1,14 @@
 const getPool = require("../../connectionDB.js");
 const connectionTool = require('../../connectionTool.js');
 
+/**
+ * 
+ * 回傳購物車內容
+ * 
+ * @param {String} restaurantName 
+ * @param {Number} customerID 
+ * @returns 
+ */
 module.exports = async function (restaurantName, customerID) {
 
     let sql = 
