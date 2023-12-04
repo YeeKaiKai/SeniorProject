@@ -23,7 +23,7 @@ module.exports = async function (food, description, defaultQuantity, quantity, i
     `;
     try {
         connectionTool.beginTransaction(connection);
-        await connectionTool.query(connection, updateMenuSql, [food, description, quantity, ingredient, price, food, category, restaurantName]);
+        await connectionTool.query(connection, updateMenuSql, [food, description, defaultQuantity, quantity, ingredient, price, food, category, restaurantName]);
         await connectionTool.query(connection, deleteCustomSql, [food, category, restaurantName]);
         if (custom != null) {
             for (let num = 0; num < custom.length; num++) {

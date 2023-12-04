@@ -1,5 +1,5 @@
 const requireCategory = require("../../model/requireCategory.js");
-const requireMenu = require("../../model/requireMenu.js");
+const requireMenu = require("../../model/customer/requireMenu.js");
 
 exports.getCategory = async function (req, res, next) {
 

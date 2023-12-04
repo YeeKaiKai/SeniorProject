@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const requireRestaurantZhTw = require("./requireRestaurantZhTw.js")
-const requireMenu = require("../../requireMenu.js");
+const requireMenu = require("../requireMenu.js");
 const requireCart = require("../cart/requireCart.js");
 const requireDialogue = require("./requireDialogue.js");
 

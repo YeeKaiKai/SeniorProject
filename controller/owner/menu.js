@@ -1,6 +1,6 @@
 const createMenuAndToCustom = require('../../model/owner/menu/createMenuAndToCustom.js');
 const updateMenu = require('../../model/owner/menu/updateMenu.js');
-const requireMenu = require('../../model/requireMenu.js');
+const requireMenu = require('../../model/owner/menu/requireMenu.js');
 const deleteMenu = require('../../model/owner/menu/deleteMenu.js');
 
 exports.postMenu = async function(req, res, next) {
