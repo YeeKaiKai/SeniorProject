@@ -62,13 +62,13 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                 let customIDSql = 
                 `
                 SELECT COUNT(DISTINCT CustomID) as count 
-                FROM CART_CUSTOMIZE 
+                FROM CART
                 WHERE Food = ? 
                 AND Note = ?
                 AND CustomerID = ? 
                 AND RestaurantName = ?
                 `
-                let customIDCount = await connectionTool.query(connection, customIDSql, [food, oldNote, customerID, restaurantName]);
+                let customIDCount = await connectionTool.query(connection, customIDSql, [food, newNote, customerID, restaurantName]);
                 // 存在同樣客製化之CustomID
                 let sameOptionCustomID = null;
                 for (let num = 1; num <= customIDCount[0].count; num++) {
@@ -84,7 +84,7 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                     AND RestaurantName = ?
                     AND CustomID = ?
                     `
-                    let customization = await connectionTool.query(connection, customizationSql, [food, oldNote, customerID, restaurantName, num]);
+                    let customization = await connectionTool.query(connection, customizationSql, [food, newNote, customerID, restaurantName, num]);
                     for (let customIndex = 0; customIndex < customization.length; customIndex++) {
     
                         // 資料庫的custom在傳入的custom的第幾筆
@@ -95,7 +95,7 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                             let countOption = customization.filter(obj => obj.custom === customization[customIndex].custom).length;
                             for (let optionIndex = 0; optionIndex < countOption; optionIndex++) {
                                 // 找到對應的custom之option
-                                let existOption = customization.map(obj => obj.option);
+                                let existOption = customization.filter(obj => obj.custom === custom[cIndex]).map(obj => obj.option);
                                 // 確認資料庫之option是否等同於傳入之option
                                 let allOptionInParams = existOption.every(op => newOption[cIndex].includes(op));
                                 // 確認傳入之option是否等同於資料庫之option
@@ -107,9 +107,14 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                             }
                         }
                     }
-                    if (haveSameCustomize == true) {
-                        // 符合即找到
-    
+                    if (customization.length == 0 && newOption[0].length == 0) {
+                        // 有兩筆「可選、但沒選」的購物車
+
+                        sameOptionCustomID = num;
+                        break;
+                    } else if (haveSameCustomize == true && customization.length > 0) {
+                        // 符合，且該筆存在客製化
+
                         sameOptionCustomID = num;
                         break;
                     }
@@ -139,8 +144,7 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                     AND CustomerID = ? 
                     AND RestaurantName = ?
                     `
-                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, oldNote, category, customerID, restaurantName, amount, sameOptionCustomID, food, oldNote, category, customerID, restaurantName]);
-    
+                    await connectionTool.query(connection, updateSql, [sameOptionCustomID, food, newNote, category, customerID, restaurantName, amount, sameOptionCustomID, food, newNote, category, customerID, restaurantName]);
                     // 將原購物車數量減至0(刪除)
                     let deleteSql = 
                     `

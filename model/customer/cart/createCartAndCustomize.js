@@ -24,7 +24,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
     const connection = await connectionTool.getConnection(pool);
 
     try {
-
+        console.log(option);
         await connectionTool.beginTransaction(connection);
         
         // 此商品是否擁有客製化
@@ -61,8 +61,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                 let customIDSql = 
                 `
                 SELECT COUNT(DISTINCT CustomID) as count 
-                FROM CART_CUSTOMIZE 
-                NATURAL JOIN CART
+                FROM CART 
                 WHERE Food = ? 
                 AND Note = ?
                 AND CustomerID = ? 
@@ -88,7 +87,6 @@ module.exports = async function (amount, custom, option, note, food, category, c
                     `
                     let customization = await connectionTool.query(connection, customizationSql, [food, note, customerID, restaurantName, num]);
                     for (let customIndex = 0; customIndex < customization.length; customIndex++) {
-
                         // 資料庫的custom在傳入的custom的第幾筆
                         let cIndex = custom.indexOf(customization[customIndex].custom);
                         // 該custom有幾組option
@@ -96,7 +94,7 @@ module.exports = async function (amount, custom, option, note, food, category, c
                         for (let optionIndex = 0; optionIndex < countOption; optionIndex++) {
                             
                             // 找到對應的custom之option
-                            let existOption = customization.map(obj => obj.option);
+                            let existOption = customization.filter(obj => obj.custom === custom[cIndex]).map(obj => obj.option);
                             // 確認資料庫之option是否等同於傳入之option
                             let allOptionInParams = existOption.every(op => option[cIndex].includes(op));
                             // 確認傳入之option是否等同於資料庫之option
@@ -107,7 +105,12 @@ module.exports = async function (amount, custom, option, note, food, category, c
                             }
                         }
                     }
-                    if (haveSameCustomize == true && customization.length > 0) {
+                    if (customization.length == 0 && option[0].length == 0) {
+                        // 有兩筆「可選、但沒選」的購物車
+
+                        sameOptionCustomID = num;
+                        break;
+                    } else if (haveSameCustomize == true && customization.length > 0) {
                         // 符合，且該筆存在客製化
 
                         sameOptionCustomID = num;
