@@ -37,7 +37,7 @@ exports.postRegistRestaurant = async function (req, res, next) {
         let tel = req.body.tel;
         let address = req.body.address
         let results = await postRegistRestaurant(restaurantName_zh_tw, email, enPassword, businessHours, tel, address);
-        res.status(200).send(results);
+        res.status(200).send({results: results});
     } catch(error) {
         res.status(500).send(error);
     }
@@ -49,7 +49,7 @@ exports.postLoginRestaurant = async function (req, res, next) {
         let email = req.body.email;
         let password = req.body.password;
         let results = await postLoginRestaurant(email, password);
-        res.status(200).send(results);
+        res.status(200).send({results: results});
     } catch(error) {
         res.status(500).send(error);
     }
