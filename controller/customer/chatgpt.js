@@ -84,6 +84,7 @@ exports.postDiagolue = async function(req, res, next) {
         }
     });
     const prompt = await promptGenerate(customerText, customerID, restaurantName);
+    console.log(prompt);
     const chatgptResponse = await api.sendMessage(prompt);    
     let chatgptText = chatgptResponse.text;
     
