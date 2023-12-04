@@ -30,14 +30,13 @@ exports.getRestaurant = async function (req, res, next) {
 exports.postRegistRestaurant = async function (req, res, next) {
 
     try {
-        let restaurantName = req.body.restaurantName;
         let restaurantName_zh_tw = req.body.restaurantName_zh_tw;
         let email = req.body.email;
         let enPassword = bcrypt.hashSync(req.body.password, 10);
         let businessHours = req.body.businessHours;
         let tel = req.body.tel;
         let address = req.body.address
-        let results = postRegistRestaurant(restaurantName, restaurantName_zh_tw, email, enPassword, businessHours, tel, address);
+        let results = await postRegistRestaurant(restaurantName_zh_tw, email, enPassword, businessHours, tel, address);
         res.status(200).send(results);
     } catch(error) {
         res.status(500).send(error);

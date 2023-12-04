@@ -15,7 +15,10 @@ module.exports = async function(email, password) {
         WHERE Email = ?
         `;
         let results = await connectionTool.query(connection, selectSql, [email]);
-        let res = bcrypt.compareSync(password, results[0].Password);
+        let res;
+        if (results.length > 0) {
+            res = bcrypt.compareSync(password, results[0].Password);
+        }
         connection.release();
         if (res) {
             return results[0].RestaurantName;
