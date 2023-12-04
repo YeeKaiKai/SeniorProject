@@ -11,20 +11,15 @@ module.exports = async function (oldFood, newFood, description, defaultQuantity,
     SET Food = ?, Description = ?, DefaultQuantity = ?, Quantity = ?, Ingredient = ?, Category = ?, Price = ?
     WHERE Food = ? AND Category = ? AND RestaurantName = ?
     `;
-    let deleteCustomSql = 
-    `
-    DELETE FROM CUSTOMIZE
-    WHERE Food = ? AND Category = ? AND RestaurantName = ?
-    `;
     let customToFoodSql = 
     `
-    INSERT INTO CUSTOMIZE(Custom, Food, Category, RestaurantName)
-    VALUES(?, ?, ?, ?)
+    UPDATE CUSTOMIZE
+    SET Custom = ?
+    WHERE Food = ? AND Category = ? AND RestaurantName = ? 
     `;
     try {
         connectionTool.beginTransaction(connection);
         await connectionTool.query(connection, updateMenuSql, [newFood, description, defaultQuantity, quantity, ingredient, newCategory, price, oldFood, oldCategory, restaurantName]);
-        await connectionTool.query(connection, deleteCustomSql, [oldFood, oldCategory, restaurantName]);
         if (custom != null) {
             for (let num = 0; num < custom.length; num++) {
                 await connectionTool.query(connection, customToFoodSql, [custom[num], newFood, newCategory, restaurantName]);
