@@ -152,7 +152,13 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                 } else {
                     // 購物車不存在同樣客製化
     
-                    // 更新原購物車 => 更新購物車資訊，刪除舊有的客製化，新增新的客製化
+                    // 更新原購物車 => 刪除舊有的客製化，更新購物車資訊，新增新的客製化
+                    let deleteCustomSql = 
+                    `
+                    DELETE FROM CART_CUSTOMIZE
+                    WHERE CustomerID = ? AND Food = ? AND Note = ? AND CustomID = ? AND RestaurantName = ?
+                    `;
+                    await connectionTool.query(connection, deleteCustomSql, [customerID, food, oldNote, customID, restaurantName]);
                     let updateCartSql = 
                     `
                     UPDATE CART
@@ -160,12 +166,6 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                     WHERE CustomID = ? AND Food= ? AND Note = ? AND Category = ? AND CustomerID = ? AND RestaurantName = ?
                     `;
                     await connectionTool.query(connection, updateCartSql, [amount, newNote, customID, food, oldNote, category, customerID, restaurantName]);
-                    let deleteCustomSql = 
-                    `
-                    DELETE FROM CART_CUSTOMIZE
-                    WHERE CustomerID = ? AND Food = ? AND Note = ? AND CustomID = ? AND RestaurantName = ?
-                    `;
-                    await connectionTool.query(connection, deleteCustomSql, [customerID, food, oldNote, customID, restaurantName]);
                     let insertCustomSql = 
                     `
                     INSERT INTO CART_CUSTOMIZE(CustomID, CustomerID, Food, Note, Category, Option, Custom, RestaurantName) 
