@@ -7,7 +7,7 @@ module.exports = async function (restaurantName) {
     const connection = await connectionTool.getConnection(pool);
     let selectSql = 
     `
-    SELECT M.Food, M.Description, M.DefaultQuantity, M.Quantity, M.Ingredient, M.Price, M.Category, M.RestaurantName
+    SELECT Food, Description, DefaultQuantity, Quantity, Ingredient, Price, Category, RestaurantName
     FROM MENU 
     WHERE RestaurantName = ?
     `;
