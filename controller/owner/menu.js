@@ -59,8 +59,8 @@ exports.getMenu = async function(req, res, next) {
 exports.deleteMenu = async function(req, res, next) {
 
     try {
-        let food = req.query.food;
-        let category = req.query.category;
+        let food = req.body.food;
+        let category = req.body.category;
         let restaurantName = req.params.restaurantName;
         await deleteMenu(food, category, restaurantName);
         res.status(204).send();
