@@ -7,9 +7,12 @@ module.exports = async function (restaurantName) {
     const connection = await connectionTool.getConnection(pool);
     let selectSql = 
     `
-    SELECT *
-    FROM MENU 
-    NATURAL JOIN CUSTOMIZE
+    SELECT M.Food, M.Description, M.DefaultQuantity, M.Quantity, M.Ingredient, M.Price, M.Category, M.RestaurantName, C.Custom
+    FROM MENU M 
+    LEFT JOIN CUSTOMIZE C 
+    ON M.Food = C.Food 
+    AND M.Category = C.Category 
+    AND M.RestaurantName = C.RestaurantName
     WHERE RestaurantName = ?
     `;
     try {
