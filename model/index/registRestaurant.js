@@ -1,3 +1,5 @@
+const stringRandom = require('string-random');
+
 const getPool = require('../connectionDB.js');
 const connectionTool = require('../connectionTool.js');
 
@@ -10,7 +12,7 @@ const connectionTool = require('../connectionTool.js');
  * @param {*} restaurantName
  */
 
-module.exports = async function (restaurantName, restaurantName_zh_tw, email, enPassword, businessHours, tel, address) {
+module.exports = async function (restaurantName_zh_tw, email, enPassword, businessHours, tel, address) {
 
     const pool = getPool();
     const connection = await connectionTool.getConnection(pool);
@@ -33,6 +35,11 @@ module.exports = async function (restaurantName, restaurantName_zh_tw, email, en
             connection.release();
             return ("此信箱已經註冊過！");
         } else {
+            let restaurantName;
+            let restaurantNameData = results.map(obj => obj.RestaurantName);
+            do {
+                restaurantName = stringRandom(10, { specials: false });
+            } while (restaurantNameData.includes(restaurantName));
             await connectionTool.query(connection, insertSql, [restaurantName, restaurantName_zh_tw, email, enPassword, businessHours, tel, address]);
             await connectionTool.commit(connection);
             connection.release();
