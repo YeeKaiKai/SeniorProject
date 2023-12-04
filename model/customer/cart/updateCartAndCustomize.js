@@ -38,8 +38,8 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
         let ifCustomize = await connectionTool.query(connection, customizeSql, [restaurantName, food]);
         if (ifCustomize[0].count > 0) {
             // 此商品存在客製化
-            if (_.isEqual(oldOption, newOption)) {
-                // 沒有更新客製化
+            if (_.isEqual(oldOption, newOption) && _.isEqual(oldNote, newNote)) {
+                // 沒有更新客製化或備註
     
                 // 更新數量、備註
                 let updateSql = 
@@ -55,7 +55,7 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
                     `
                     await connectionTool.query(connection, updateSql, [amount, newNote, customID, food, oldNote, category, customerID, restaurantName]);
             } else {
-                // 有更新客製化
+                // 有更新客製化或備註
 
                 // 檢查是否存在著客製化相同
                 // 需要檢查幾筆
@@ -89,21 +89,19 @@ module.exports = async function (amount, custom, oldOption, newOption, oldNote, 
     
                         // 資料庫的custom在傳入的custom的第幾筆
                         let cIndex = custom.indexOf(customization[customIndex].custom);
-                        if (cIndex >= 0) { 
-                            // 傳入的custom含有資料庫的該custom
-                            // 該custom有幾組option
-                            let countOption = customization.filter(obj => obj.custom === customization[customIndex].custom).length;
-                            for (let optionIndex = 0; optionIndex < countOption; optionIndex++) {
-                                // 找到對應的custom之option
-                                let existOption = customization.filter(obj => obj.custom === custom[cIndex]).map(obj => obj.option);
-                                // 確認資料庫之option是否等同於傳入之option
-                                let allOptionInParams = existOption.every(op => newOption[cIndex].includes(op));
-                                // 確認傳入之option是否等同於資料庫之option
-                                let allOptionINDB = newOption[cIndex].every(op => existOption.includes(op));
-                                if (!allOptionInParams || !allOptionINDB) {
-                                    // 有option不相同即為不符合
-                                    haveSameCustomize = false;
-                                }
+                        // 傳入的custom含有資料庫的該custom
+                        // 該custom有幾組option
+                        let countOption = customization.filter(obj => obj.custom === customization[customIndex].custom).length;
+                        for (let optionIndex = 0; optionIndex < countOption; optionIndex++) {
+                            // 找到對應的custom之option
+                            let existOption = customization.filter(obj => obj.custom === custom[cIndex]).map(obj => obj.option);
+                            // 確認資料庫之option是否等同於傳入之option
+                            let allOptionInParams = existOption.every(op => newOption[cIndex].includes(op));
+                            // 確認傳入之option是否等同於資料庫之option
+                            let allOptionINDB = newOption[cIndex].every(op => existOption.includes(op));
+                            if (!allOptionInParams || !allOptionINDB) {
+                                // 有option不相同即為不符合
+                                haveSameCustomize = false;
                             }
                         }
                     }
