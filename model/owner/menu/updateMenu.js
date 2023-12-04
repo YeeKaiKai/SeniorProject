@@ -8,7 +8,7 @@ module.exports = async function (food, description, defaultQuantity, quantity, i
     let updateMenuSql = 
     `
     UPDATE MENU
-    SET Food = ? AND Description = ? AND DefaultQuantity = ? AND Quantity = ? AND Ingredient = ? AND Price = ?
+    SET Food = ?, Description = ?, DefaultQuantity = ?, Quantity = ?, Ingredient = ?, Price = ?
     WHERE Food = ? AND Category = ? AND RestaurantName = ?
     `;
     let deleteCustomSql = 
